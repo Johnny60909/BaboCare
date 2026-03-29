@@ -1,0 +1,14 @@
+# Backend
+.vs
+*.user
+obj
+bin
+*.ini
+
+# Frontend
+
+node_modules
+dist
+
+# Editor directories and files
+.vscode/*
