@@ -1,10 +1,11 @@
 # Frontend Specification
 
-## Vue 3 Composition API
+## Core Stack
 
-- Use `<script setup lang="ts">`.
-- Logic separation: Keep complex logic in `.ts` composables.
-
-## 2. PrimeVue v4 Standards
-
-- **Component First**: ALWAYS prioritize PrimeVue components. Avoid raw HTML tags.
+- **Framework**: React with **React Router** (SPA Mode).
+- **UI Library**: **Mantine UI** (Primary) & **Tailwind CSS** (Layout/Styling).
+- **State Management**: **TanStack Query** (Server) & **Zustand** (Local).
+- **Icons**: `lucide-react`.
+- **RWD First**: Use Tailwind's responsive modifiers for all layouts.
+- **Aesthetics**: Focus on clean typography, consistent spacing, and modern interactive patterns (e.g., Modals, Drawers).
+- **Logic Separation**: Business logic resides in Custom Hooks (`.ts`), keeping Components (`.tsx`) focused on View.

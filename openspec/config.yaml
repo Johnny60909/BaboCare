@@ -4,8 +4,8 @@ schema: spec-driven
 - **Backend**: .NET 10, EF Core 10.
 - **Database**: **PostgreSQL** (Npgsql).
 - **Identity**: OpenIddict (Password Flow).
-- **Frontend**: Vue 3.5+, TypeScript, Pinia.
-- **UI Library**: PrimeVue v4+.
+- **Frontend**: React, React Router, TypeScript.
+- **UI Library**: Mantine UI, Tailwind CSS.
 
 ## Module Index
 - Backend Logic: `#file:tech-backend.md`
