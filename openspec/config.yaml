@@ -10,23 +10,23 @@ rules:
     - Include sequence diagrams for complex flows
 
 technical-stack:
-  backend: 
+  backend:
     - .NET 10, EF Core 10
-  database: 
+  database:
     - PostgreSQL (Npgsql)
-  identity: 
+  identity:
     - OpenIddict (Password Flow)
-  frontend: 
+  frontend:
     - React, React Router, TypeScript
-  ui-library: 
+  ui-library:
     - Mantine UI, Tailwind CSS
-  api-conventions: 
+  api-conventions:
     - RESTful, JSON responses
 
 module-index:
-  backend-logic: 
+  backend-logic:
     - "./tech-backend.md"
-  frontend-logic: 
+  frontend-logic:
     - "./tech-frontend.md"
-  security-logic: 
+  security-logic:
     - "./tech-identity.md"

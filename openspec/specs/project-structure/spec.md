@@ -4,13 +4,13 @@
 
 後端 SHALL 由以下五個專案組成，全部置於 `Backend/src/`，依賴關係嚴格遵循由外向內方向：
 
-| 專案 | 類型 | 主要職責 |
-|------|------|---------|
-| `BaboCare.Domain` | Class Library | 實體、`AggregateRoot`、`Specification<T>` |
-| `BaboCare.Application` | Class Library | Use Cases、介面定義 |
-| `BaboCare.Infrastructure` | Class Library | EF Core、Migrations、Configurations |
-| `BaboCare.Identity` | Web API | OpenIddict Authorization Server |
-| `BaboCare.Api` | Web API | 業務 API、OpenIddict Resource Server |
+| 專案                      | 類型          | 主要職責                                  |
+| ------------------------- | ------------- | ----------------------------------------- |
+| `BaboCare.Domain`         | Class Library | 實體、`AggregateRoot`、`Specification<T>` |
+| `BaboCare.Application`    | Class Library | Use Cases、介面定義                       |
+| `BaboCare.Infrastructure` | Class Library | EF Core、Migrations、Configurations       |
+| `BaboCare.Identity`       | Web API       | OpenIddict Authorization Server           |
+| `BaboCare.Api`            | Web API       | 業務 API、OpenIddict Resource Server      |
 
 #### Scenario: Domain 零外部依賴
 
