@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.5" />
+    <PackageReference Include="OpenIddict.AspNetCore" Version="7.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaboCare.Application\BaboCare.Application.csproj" />
+    <ProjectReference Include="..\BaboCare.Domain\BaboCare.Domain.csproj" />
+    <ProjectReference Include="..\BaboCare.Infrastructure\BaboCare.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

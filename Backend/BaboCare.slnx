@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="src\BaboCare.Domain\BaboCare.Domain.csproj" />
+  <Project Path="src\BaboCare.Application\BaboCare.Application.csproj" />
+  <Project Path="src\BaboCare.Infrastructure\BaboCare.Infrastructure.csproj" />
+  <Project Path="src\BaboCare.Identity\BaboCare.Identity.csproj" />
+  <Project Path="src\BaboCare.Api\BaboCare.Api.csproj" />
+</Solution>
