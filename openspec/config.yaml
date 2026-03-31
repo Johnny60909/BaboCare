@@ -1,13 +1,32 @@
 schema: spec-driven
 
-## Technical Stack
-- **Backend**: .NET 10, EF Core 10.
-- **Database**: **PostgreSQL** (Npgsql).
-- **Identity**: OpenIddict (Password Flow).
-- **Frontend**: React, React Router, TypeScript.
-- **UI Library**: Mantine UI, Tailwind CSS.
+rules:
+  proposal:
+    - Include rollback plan
+    - Identify affected teams
+  specs:
+    - Use Given/When/Then format for scenarios
+  design:
+    - Include sequence diagrams for complex flows
 
-## Module Index
-- Backend Logic: `#file:tech-backend.md`
-- Frontend Logic: `#file:tech-frontend.md`
-- Security Logic: `#file:tech-identity.md`
+technical-stack:
+  backend: 
+    - .NET 10, EF Core 10
+  database: 
+    - PostgreSQL (Npgsql)
+  identity: 
+    - OpenIddict (Password Flow)
+  frontend: 
+    - React, React Router, TypeScript
+  ui-library: 
+    - Mantine UI, Tailwind CSS
+  api-conventions: 
+    - RESTful, JSON responses
+
+module-index:
+  backend-logic: 
+    - "./tech-backend.md"
+  frontend-logic: 
+    - "./tech-frontend.md"
+  security-logic: 
+    - "./tech-identity.md"

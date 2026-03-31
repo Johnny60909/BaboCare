@@ -1,5 +1,18 @@
 # Backend Spec: .NET 10 & PostgreSQL
 
+## Solution Structure
+
+- **Root**: `Backend/` (contains `.sln`).
+- **Source**: `Backend/src/` (contains all projects).
+- **Test**: `Backend/tests/` (contains xUnit projects).
+
+## Project Structure Rules
+
+- **Domain**: Zero dependencies. (Core logic/Entities/Specs).
+- **Application**: Depends on **Domain**. (Defines Interfaces for Infra).
+- **Infrastructure**: Depends on **Application** & **Domain**. (Implements Interfaces).
+- **Api**: Depends on **ALL**. (The "Glue" that performs DI registration).
+
 ## DB & Persistence
 
 - **Provider**: Npgsql.EntityFrameworkCore.PostgreSQL.
