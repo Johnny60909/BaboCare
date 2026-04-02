@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer components {
+  .input {
+    @apply w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed;
+  }
+}
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;

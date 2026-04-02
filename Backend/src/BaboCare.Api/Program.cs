@@ -1,9 +1,17 @@
+using BaboCare.Application.Persistence;
+using BaboCare.Application.Services;
+using BaboCare.Domain.Entities;
 using BaboCare.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.Validation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
+// Application Services
+builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+builder.Services.AddScoped<IPendingAccountService, PendingAccountService>();
 
 // Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>
@@ -40,8 +48,28 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseOpenIddict();
 });
 
+// Register IAppDbContext interface for Application layer
+builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
+
+// Identity Core (UserManager/RoleManager only, no cookie auth)
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+    {
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 6;
+    })
+    .AddRoles<ApplicationRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
 // OpenIddict validation - validates tokens issued by BaboCare.Identity
 var identityUrl = builder.Configuration["Identity:Url"] ?? "http://localhost:5080/";
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+});
 builder.Services.AddOpenIddict()
     .AddValidation(options =>
     {

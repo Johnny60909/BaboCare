@@ -58,6 +58,18 @@ public class AuthorizationController : ControllerBase
                         }));
             }
 
+            if (user.IsDeleted || !user.IsActive)
+            {
+                return Forbid(
+                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                    properties: new AuthenticationProperties(
+                        new Dictionary<string, string?>
+                        {
+                            [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+                            [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "帳號已停用或已刪除。"
+                        }));
+            }
+
             var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password!, lockoutOnFailure: true);
             if (!result.Succeeded)
             {
@@ -76,6 +88,10 @@ public class AuthorizationController : ControllerBase
 
             var identity = (ClaimsIdentity)principal.Identity!;
             identity.AddClaim(new Claim(Claims.Subject, user.Id));
+
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+                identity.AddClaim(new Claim(Claims.Role, role));
 
             foreach (var claim in principal.Claims)
                 claim.SetDestinations(GetDestinations(claim, principal));
@@ -107,6 +123,10 @@ public class AuthorizationController : ControllerBase
             var identity = (ClaimsIdentity)principal.Identity!;
             identity.AddClaim(new Claim(Claims.Subject, user.Id));
 
+            var refreshRoles = await _userManager.GetRolesAsync(user);
+            foreach (var role in refreshRoles)
+                identity.AddClaim(new Claim(Claims.Role, role));
+
             foreach (var claim in principal.Claims)
                 claim.SetDestinations(GetDestinations(claim, principal));
 
@@ -134,7 +154,6 @@ public class AuthorizationController : ControllerBase
     /// </remarks>
     private static IEnumerable<string> GetDestinations(Claim claim, ClaimsPrincipal principal)
     {
-        /// <remarks>根據聲明類型決定應包含在哪些令牌中</remarks>
         switch (claim.Type)
         {
             case Claims.Name:
@@ -144,6 +163,11 @@ public class AuthorizationController : ControllerBase
                 yield break;
 
             case Claims.Subject:
+                yield return Destinations.AccessToken;
+                yield return Destinations.IdentityToken;
+                yield break;
+
+            case Claims.Role:
                 yield return Destinations.AccessToken;
                 yield return Destinations.IdentityToken;
                 yield break;

@@ -1,6 +1,6 @@
-import { Navigate } from 'react-router';
+import { Navigate, Link, useSearchParams } from 'react-router';
 import { useState } from 'react';
-import { TextInput, PasswordInput, Button, Paper, Title, Text, Container, Alert } from '@mantine/core';
+import { TextInput, PasswordInput, Button, Paper, Title, Text, Container, Alert, Anchor } from '@mantine/core';
 import { useLogin } from '../hooks/useLogin';
 import { getToken } from '../lib/auth';
 import { useNavigate } from 'react-router';
@@ -10,7 +10,10 @@ import { useNavigate } from 'react-router';
 /// </summary>
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [searchParams] = useSearchParams();
+  const activated = searchParams.get('activated') === '1';
+  const prefillUsername = searchParams.get('username') ?? '';
+  const [username, setUsername] = useState(prefillUsername);
   const [password, setPassword] = useState('');
   const { mutate: login, isPending, error } = useLogin();
 
@@ -32,6 +35,11 @@ export const LoginPage = () => {
       <Text c="dimmed" size="sm" ta="center" mb="xl">保母托育管理系統</Text>
       <Paper withBorder shadow="md" p="xl" radius="md">
         <form onSubmit={handleSubmit}>
+          {activated && (
+            <Alert color="green" mb="md">
+              🎉 帳號已成功啟用！請使用帳號密碼登入。
+            </Alert>
+          )}
           <TextInput
             label="帳號"
             placeholder="請輸入帳號"
@@ -57,6 +65,12 @@ export const LoginPage = () => {
             登入
           </Button>
         </form>
+        <Text size="sm" ta="center" mt="md">
+          還沒有帳號？{' '}
+          <Anchor component={Link} to="/register" size="sm">
+            初次登入（自行申請）
+          </Anchor>
+        </Text>
       </Paper>
     </Container>
   );

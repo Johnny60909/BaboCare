@@ -22,10 +22,47 @@ namespace BaboCare.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("BaboCare.Domain.Entities.ApplicationRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(26)
+                        .HasColumnType("character varying(26)")
+                        .HasComment("角色唯一識別碼（ULID 格式）");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasComment("並行檢查戳記");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasComment("角色名稱");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasComment("角色名稱（大寫，用於查詢）");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", null, t =>
+                        {
+                            t.HasComment("應用程式角色");
+                        });
+                });
+
             modelBuilder.Entity("BaboCare.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("text");
+                        .HasMaxLength(26)
+                        .HasColumnType("character varying(26)")
+                        .HasComment("使用者唯一識別碼（ULID 格式）");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -34,12 +71,30 @@ namespace BaboCare.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasComment("使用者顯示名稱");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasComment("性別");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasComment("帳號是否啟用（false 表示停用）");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasComment("帳號是否刪除（軟刪除標記）");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -83,33 +138,80 @@ namespace BaboCare.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("AspNetUsers", null, t =>
+                        {
+                            t.HasComment("應用程式使用者帳號");
+                        });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+            modelBuilder.Entity("BaboCare.Domain.Entities.PendingUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("text");
+                        .HasMaxLength(26)
+                        .HasColumnType("character varying(26)")
+                        .HasComment("主鍵（ULID 格式）");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasComment("頭像 URL");
 
-                    b.Property<string>("Name")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasComment("建立時間");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasComment("顯示名稱");
+
+                    b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasComment("郵箱地址");
 
-                    b.Property<string>("NormalizedName")
+                    b.Property<string>("InviteCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasComment("邀請碼（保母產生的 8 字母碼）");
+
+                    b.Property<int>("InviteCodeAttempts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("InviteCodeExpiry")
+                        .HasColumnType("timestamp with time zone")
+                        .HasComment("邀請碼過期時間");
+
+                    b.Property<string>("PasswordHash")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasComment("密碼 Hash（僅情境 C 有值）");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasComment("手機號碼");
+
+                    b.Property<string>("ProviderKey")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasComment("第三方登入提供者鑰匙（Google/Line 的用戶 ID，延後 OAuth 時用）");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("integer")
+                        .HasComment("帳號來源（Account:自填帳號申請、Email:待 email 驗證、PhoneNumber:待手機驗證）");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasComment("帳號（使用者自填）");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("PendingUsers", null, t =>
+                        {
+                            t.HasComment("待匹配帳號（家長初次登入但未驗證時的暫存資料）");
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -128,7 +230,7 @@ namespace BaboCare.Infrastructure.Migrations
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(26)");
 
                     b.HasKey("Id");
 
@@ -153,7 +255,7 @@ namespace BaboCare.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(26)");
 
                     b.HasKey("Id");
 
@@ -175,7 +277,7 @@ namespace BaboCare.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(26)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -187,10 +289,10 @@ namespace BaboCare.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(26)");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(26)");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -202,7 +304,7 @@ namespace BaboCare.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying(26)");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -428,7 +530,7 @@ namespace BaboCare.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("BaboCare.Domain.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -455,7 +557,7 @@ namespace BaboCare.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("BaboCare.Domain.Entities.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -516,4 +618,3 @@ namespace BaboCare.Infrastructure.Migrations
         }
     }
 }
-
