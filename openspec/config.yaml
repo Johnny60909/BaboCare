@@ -19,7 +19,7 @@ technical-stack:
   frontend:
     - React, React Router, TypeScript
   ui-library:
-    - Mantine UI, Tailwind CSS
+    - Mantine UI v8, Tailwind CSS
   api-conventions:
     - RESTful, JSON responses
 

@@ -3,7 +3,7 @@
 ## Core Stack
 
 - **Framework**: React with React Router v7 (SPA Mode).
-- **UI Library**: Mantine UI v7 (Components) & Tailwind CSS (Utility-first Layout).
+- **UI Library**: Mantine UI v8 (Components) & Tailwind CSS (Utility-first Layout).
 - **State Management**:
   - **Server State**: TanStack Query (React Query) for all API interactions.
   - **Local State**: Zustand for UI-only state (e.g., Sidebars, Modals).

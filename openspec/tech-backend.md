@@ -16,9 +16,9 @@
 ## API & Security Standards
 
 - **DTO Consolidation**:
-  Core Business: All business-related Request/Response DTOs MUST be placed in .Application/Dtos.
-  Identity Module: Identity-specific DTOs (e.g., LoginRequest, TokenResponse) SHOULD be placed within Identity-Project/Dtos to maintain module encapsulation.
-- **Strong Typing**: Controllers MUST use ActionResult<TResponseDto>. Avoid raw IActionResult.
+  - **Core Business**: All business-related Request/Response DTOs MUST be placed in .Application/Dtos.
+  - **Identity Module**: Identity-specific DTOs (e.g., LoginRequest, TokenResponse) SHOULD be placed within Identity-Project/Dtos to maintain module encapsulation.
+- **Strong Typing**: Controllers MUST use TResponseDto. Avoid raw IActionResult.
 - **Thin Controllers**: No business or database logic in Controllers. Maximum 30 lines per action.
 - **Logic Location (Application Service Pattern)**: Business Flow & Database Access: MUST be encapsulated in Application/Services/.
 - **Database Access**: Application Services interact with the database via Interfaces (e.g., IAppDbContext) defined within the Application layer.
