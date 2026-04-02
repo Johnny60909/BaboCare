@@ -13,12 +13,24 @@
 - **Infrastructure**: Depends on **Application** & **Domain**. (Implements Interfaces).
 - **Api**: Depends on **ALL**. (The "Glue" that performs DI registration).
 
+## API & Security Standards
+
+- **DTO Consolidation**:
+  Core Business: All business-related Request/Response DTOs MUST be placed in .Application/Dtos.
+  Identity Module: Identity-specific DTOs (e.g., LoginRequest, TokenResponse) SHOULD be placed within Identity-Project/Dtos to maintain module encapsulation.
+- **Strong Typing**: Controllers MUST use ActionResult<TResponseDto>. Avoid raw IActionResult.
+- **Thin Controllers**: No business or database logic in Controllers. Maximum 30 lines per action.
+- **Logic Location (Application Service Pattern)**: Business Flow & Database Access: MUST be encapsulated in Application/Services/.
+- **Database Access**: Application Services interact with the database via Interfaces (e.g., IAppDbContext) defined within the Application layer.
+- **Implementation**: The actual EF Core AppDbContext and PostgreSQL configurations reside in Infrastructure, satisfying the interfaces defined by Application.
+
 ## DB & Persistence
 
 - **Provider**: Npgsql.EntityFrameworkCore.PostgreSQL.
 - **Naming**: Use Snake Case for Postgres naming conventions (optional) or Standard PascalCase.
 - **ID Strategy**: **ULID** (Universally Unique Lexicographically Sortable Identifier).
 - **Configuration**: Every entity must have a corresponding configuration class.
+- **Metadata**: Every entity configuration MUST include .HasComment() for tables and columns to provide database-level documentation.
 
 ```csharp
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
@@ -46,6 +58,7 @@ DDD Pattern
 - **Base Class**: All Root entities MUST inherit `AggregateRoot`.
 - **State Change**: State changes MUST occur through `TriggerAsync(event)`.
 - **No Repository**: Inject `AppDbContext` directly. Use `await db.SaveChangesAsync()`.
+- **Identity Module**: Identity entities (Users/Roles) are Non-DDD; they do not use AggregateRoot or TriggerAsync.
 - **Specification**:
   Create a Specification<T> base class that defines Criteria (Expression) and Includes. To encapsulate complex LINQ queries and reusable business search rules.
 
