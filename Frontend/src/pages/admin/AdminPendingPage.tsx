@@ -1,14 +1,14 @@
-import { KeyRound, Trash2 } from 'lucide-react';
+import { KeyRound, Trash2 } from "lucide-react";
 import {
   usePendingUsers,
   useGenerateInviteCodeMutation,
   useRemovePendingUserMutation,
-} from '../../hooks/queries/usePendingUsers';
+} from "../../hooks/queries/usePendingUsers";
 
 const sourceLabel: Record<string, string> = {
-  Google: 'Google',
-  Line: 'LINE',
-  Account: '一般帳號',
+  Google: "Google",
+  Line: "LINE",
+  Account: "一般帳號",
 };
 
 export const AdminPendingPage = () => {
@@ -21,7 +21,7 @@ export const AdminPendingPage = () => {
   };
 
   const dismiss = (id: string) => {
-    if (!confirm('確定要移除此待匹配記錄？')) return;
+    if (!confirm("確定要移除此待匹配記錄？")) return;
     removePendingMutation.mutate(id);
   };
 
@@ -30,71 +30,86 @@ export const AdminPendingPage = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">待匹配帳號</h1>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-babo-text mb-1">待匹配帳號</h1>
+        <p className="text-babo-text-light text-sm">
+          審核並分配邀請碼給待驗證使用者
+        </p>
+      </div>
 
       {items.length === 0 ? (
-        <p className="text-gray-400 py-8 text-center">目前無待匹配記錄</p>
+        <div className="ios-card p-12 text-center">
+          <p className="text-babo-text-light text-base">目前無待匹配記錄</p>
+        </div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="space-y-3">
           {items.map((p) => (
-            <div
-              key={p.id}
-              className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4"
-            >
+            <div key={p.id} className="ios-card p-5 flex items-start gap-4">
               {/* 頭像 */}
               <div className="shrink-0">
                 {p.avatarUrl ? (
                   <img
                     src={p.avatarUrl}
                     alt={p.displayName}
-                    className="h-10 w-10 rounded-full object-cover"
+                    className="h-12 w-12 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-500 text-sm font-medium">
-                    {p.displayName?.[0] ?? '?'}
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-babo-primary/10 text-babo-primary text-base font-bold">
+                    {p.displayName?.[0] ?? "?"}
                   </div>
                 )}
               </div>
 
               {/* 資訊 */}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 truncate">{p.displayName || '（未填寫）'}</p>
-                <p className="text-xs text-gray-500">
-                  {p.email || p.phoneNumber || '無聯絡資料'} ·{' '}
-                  <span className="rounded bg-gray-100 px-1.5 py-0.5">
+                <h3 className="font-bold text-babo-text text-lg mb-1">
+                  {p.displayName || "（未填寫）"}
+                </h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-sm text-babo-text-light">
+                    {p.email || p.phoneNumber || "無聯絡資料"}
+                  </span>
+                  <span className="text-xs font-bold px-2 py-1 rounded-full bg-gray-100 text-babo-text-light">
                     {sourceLabel[p.source] ?? p.source}
                   </span>
-                </p>
+                </div>
                 {p.inviteCode && (
-                  <p className="mt-1 text-xs text-blue-700">
-                    邀請碼：<span className="font-mono font-semibold">{p.inviteCode}</span>
+                  <div className="text-sm">
+                    <span className="text-babo-text-light">邀請碼：</span>
+                    <span className="font-mono font-bold text-babo-primary px-1.5">
+                      {p.inviteCode}
+                    </span>
                     {p.isInviteCodeValid ? (
-                      <span className="ml-1 text-green-600">✓ 有效</span>
+                      <span className="ml-1 text-green-600 font-bold">
+                        ✓ 有效
+                      </span>
                     ) : (
-                      <span className="ml-1 text-red-600">✗ 已過期</span>
+                      <span className="ml-1 text-orange-600 font-bold">
+                        ✗ 已過期
+                      </span>
                     )}
-                  </p>
+                  </div>
                 )}
               </div>
 
               {/* 操作 */}
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
                 <button
                   onClick={() => generateCode(p.id)}
                   disabled={generateCodeMutation.isPending}
-                  className="flex items-center gap-1 rounded-md border border-blue-300 px-2.5 py-1.5 text-xs text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+                  className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold border-2 border-babo-primary text-babo-primary hover:bg-blue-50 disabled:opacity-60 transition-colors"
                   title="產生邀請碼"
                 >
-                  <KeyRound size={13} />
-                  {p.inviteCode ? '重新產生' : '產生邀請碼'}
+                  <KeyRound size={14} />
+                  {p.inviteCode ? "重新產生" : "邀請碼"}
                 </button>
                 <button
                   onClick={() => dismiss(p.id)}
                   disabled={removePendingMutation.isPending}
-                  className="flex items-center justify-center rounded-md border border-gray-200 p-1.5 text-gray-400 hover:border-red-300 hover:text-red-500 disabled:opacity-50"
+                  className="flex items-center justify-center rounded-full p-2.5 border-2 border-gray-300 text-gray-400 hover:border-red-300 hover:text-red-500 hover:bg-red-50 disabled:opacity-60 transition-colors"
                   title="移除"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} />
                 </button>
               </div>
             </div>

@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useActivatePendingMutation } from '../hooks/queries/usePendingUsers';
+import { CheckCircle2 } from 'lucide-react';
 
+/// <summary>
+/// 帳號驗證碼綁定頁 - 依據設計風格實現
+/// </summary>
 export const ActivatePage = () => {
   const location = useLocation();
   const fromRegister = location.state?.fromRegister === true;
@@ -11,6 +15,10 @@ export const ActivatePage = () => {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const activateMutation = useActivatePendingMutation();
+
+  const handleCodeChange = (value: string) => {
+    setCode(value.toUpperCase());
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,48 +38,65 @@ export const ActivatePage = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm text-center">
-        {fromRegister ? (
-          <>
-            <h1 className="text-xl font-bold text-gray-900 mb-1">等待授權中</h1>
-            <p className="text-sm text-gray-500 mb-6">
-              申請已送出，請聯繫保母索取邀請碼後在下方輸入
-            </p>
-          </>
-        ) : (
-          <>
-            <h1 className="text-xl font-bold text-gray-900 mb-1">尚未獲得授權</h1>
-            <p className="text-sm text-gray-500 mb-6">
-              請向保母索取邀請碼以啟用您的帳號
-            </p>
-          </>
-        )}
+    <div className="min-h-screen bg-babo-bg flex items-center justify-center px-8 py-20">
+      <div className="w-full max-w-sm">
+        {/* 頂部圖示 */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-blue-100 rounded-full mx-auto flex items-center justify-center mb-6">
+            <CheckCircle2 className="w-10 h-10 text-blue-400" />
+          </div>
+          
+          {fromRegister ? (
+            <>
+              <h1 className="text-2xl font-bold text-babo-text mb-2">等待授權中</h1>
+              <p className="text-sm text-babo-text-light">
+                申請已送出，請聯繫保母索取邀請碼後在下方輸入
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold text-babo-text mb-2">尚未獲得授權</h1>
+              <p className="text-sm text-babo-text-light">
+                請向保母索取邀請碼以啟用您的帳號
+              </p>
+            </>
+          )}
+        </div>
 
+        {/* 錯誤訊息 */}
         {error && (
-          <div className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">{error}</div>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
+            <p className="text-sm text-red-700 font-medium">{error}</p>
+          </div>
         )}
 
-        <form onSubmit={submit} className="flex flex-col gap-4">
-          <input
-            type="text"
-            required
-            placeholder="輸入邀請碼"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="input text-center tracking-widest text-lg uppercase"
-          />
+        {/* 表單 */}
+        <form onSubmit={submit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-babo-text mb-3">邀請碼</label>
+            <input
+              type="text"
+              required
+              placeholder="輸入邀請碼"
+              value={code}
+              onChange={(e) => handleCodeChange(e.target.value)}
+              maxLength={10}
+              className="input text-center tracking-widest text-lg uppercase font-bold"
+            />
+          </div>
+
           <button
             type="submit"
             disabled={activateMutation.isPending || !code.trim()}
-            className="rounded-lg bg-blue-600 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="w-full p-5 bg-babo-primary text-white font-bold rounded-[32px] shadow-lg shadow-blue-200 active:scale-95 transition-transform disabled:opacity-50 disabled:shadow-none"
           >
-            {activateMutation.isPending ? '驗證中…' : '啟用帳號'}
+            {activateMutation.isPending ? '驗證中...' : '啟用帳號'}
           </button>
         </form>
 
-        <p className="mt-4 text-xs text-gray-400">
-          邀請碼由保母產生，具有時效限制
+        {/* 提示文字 */}
+        <p className="mt-6 text-xs text-center text-babo-text-light">
+          邀請碼由保母產生，具有時效限制。<br />未收到邀請碼？請直接聯繫保母。
         </p>
       </div>
     </div>

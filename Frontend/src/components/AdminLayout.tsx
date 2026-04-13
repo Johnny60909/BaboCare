@@ -1,80 +1,53 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router';
-import { Users, Clock, Home, ChevronLeft, ChevronRight } from 'lucide-react';
+import { NavLink, Outlet, useNavigate } from "react-router";
+import { Users, Clock, Home } from "lucide-react";
 
 const navItems = [
-  { icon: Users, label: '帳號管理', path: '/admin/users' },
-  { icon: Clock, label: '待匹配帳號', path: '/admin/pending' },
+  { icon: Home, label: "管理首頁", path: "/admin" },
+  { icon: Users, label: "帳號管理", path: "/admin/users" },
+  { icon: Clock, label: "待匹配帳號", path: "/admin/pending" },
 ];
 
 export const AdminLayout = () => {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="flex min-h-screen">
-      <aside
-        className={`shrink-0 border-r border-gray-200 bg-gray-50 flex flex-col transition-all duration-200 ${
-          collapsed ? 'w-14' : 'w-52'
-        }`}
-      >
-        {/* Header + toggle */}
-        <div className="flex items-center justify-between pt-4 px-2 mb-1">
-          {!collapsed && (
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2">
-              後台管理
-            </p>
-          )}
-          <button
-            onClick={() => setCollapsed((c) => !c)}
-            className="ml-auto rounded-md p-1.5 text-gray-400 hover:bg-gray-200 hover:text-gray-700 transition-colors"
-            title={collapsed ? '展開選單' : '收合選單'}
-          >
-            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-          </button>
-        </div>
-
-        {/* Nav items */}
-        <nav className="flex flex-col gap-1 px-2 flex-1">
-          {navItems.map(({ icon: Icon, label, path }) => (
-            <NavLink
-              key={path}
-              to={path}
-              title={collapsed ? label : undefined}
-              className={({ isActive }) =>
-                `flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors ${
-                  collapsed ? 'justify-center' : ''
-                } ${
-                  isActive
-                    ? 'bg-blue-50 text-blue-700 font-medium'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`
-              }
-            >
-              <Icon size={16} className="shrink-0" />
-              {!collapsed && label}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* 返回首頁 */}
-        <div className="px-2 pb-4">
-          <button
-            onClick={() => navigate('/')}
-            title={collapsed ? '返回首頁' : undefined}
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors ${
-              collapsed ? 'justify-center' : ''
-            }`}
-          >
-            <Home size={16} className="shrink-0" />
-            {!collapsed && '返回首頁'}
-          </button>
-        </div>
-      </aside>
-
+    <div className="flex flex-col min-h-screen bg-babo-bg">
       <main className="flex-1 overflow-y-auto p-6">
         <Outlet />
       </main>
+
+      {/* 下方導航 */}
+      <nav className="fixed bottom-0 left-0 right-0 glass-nav z-50 h-20 flex items-center justify-around px-4 border-t border-gray-200">
+        {navItems.map(({ icon: Icon, label, path }) => (
+          <NavLink
+            key={path}
+            to={path}
+            end={path === "/admin"}
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center gap-1 py-2 px-3 text-xs transition-colors rounded-lg ${
+                isActive
+                  ? "text-babo-primary"
+                  : "text-babo-text-light hover:text-babo-text"
+              }`
+            }
+            title={label}
+          >
+            <Icon size={24} />
+            <span className="text-[10px] font-medium">{label}</span>
+          </NavLink>
+        ))}
+        <button
+          onClick={() => navigate("/")}
+          className="flex flex-col items-center justify-center gap-1 py-2 px-3 text-xs text-babo-text-light hover:text-babo-text transition-colors rounded-lg"
+          title="返回首頁"
+        >
+          <Home size={24} />
+          <span className="text-[10px] font-medium">返回</span>
+        </button>
+      </nav>
+
+      {/* 底部間距 */}
+      <div className="h-20" />
     </div>
   );
 };

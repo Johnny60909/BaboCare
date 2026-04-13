@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaboCare - 居家保母 App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #FDFBF7; /* 米色背景 */
+            color: #4A4A4A;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ios-card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .ios-card:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            border-radius: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* 隱藏捲軸但保留功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .status-ring {
+            padding: 2px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+        .status-awake { border-color: #A7D397; } /* 淺綠 */
+        .status-sleep { border-color: #A084E8; } /* 紫色 */
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+        .page.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 10px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #9BBEC8;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 登入與邀請碼綁定頁 -->
+    <div id="page-login" class="page active px-8 pt-20 flex flex-col items-center justify-center">
+        <div class="w-full max-w-sm text-center">
+            <div class="mb-10">
+                <div class="w-24 h-24 bg-blue-100 rounded-[32px] mx-auto flex items-center justify-center mb-6 shadow-sm">
+                    <i class="fas fa-baby text-4xl text-blue-400"></i>
+                </div>
+                <h1 class="text-3xl font-bold tracking-tight mb-2">BaboCare</h1>
+                <p class="text-gray-400">溫馨育兒，從這裡開始</p>
+            </div>
+
+            <!-- 一般登入 -->
+            <div class="space-y-4 mb-8">
+                <input type="text" placeholder="帳號或電子郵件" class="w-full p-5 bg-gray-100 rounded-[32px] focus:outline-none focus:ring-2 focus:ring-blue-200">
+                <input type="password" placeholder="密碼" class="w-full p-5 bg-gray-100 rounded-[32px] focus:outline-none focus:ring-2 focus:ring-blue-200">
+                <button onclick="showPage('page-home')" class="w-full p-5 bg-gray-800 text-white font-bold rounded-[32px] shadow-lg active:scale-95 transition-transform">
+                    登入
+                </button>
+            </div>
+
+            <!-- 三方登入 -->
+            <div class="space-y-3 mb-10">
+                <button class="w-full p-4 bg-[#06C755] text-white font-medium rounded-[32px] flex items-center justify-center gap-2">
+                    <i class="fab fa-line text-xl"></i> LINE 快速登入
+                </button>
+                <button class="w-full p-4 bg-white border border-gray-200 text-gray-700 font-medium rounded-[32px] flex items-center justify-center gap-2">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5"> Google 帳號登入
+                </button>
+            </div>
+
+            <div class="pt-6 border-t border-gray-100">
+                <p class="text-sm text-gray-500 mb-4">輸入保母提供的邀請碼，開始參與寶寶的每一天</p>
+                <div class="flex justify-between gap-2 px-2">
+                    <input type="text" maxlength="1" class="w-12 h-16 text-2xl text-center bg-white border-2 border-gray-100 rounded-2xl focus:border-blue-300 outline-none">
+                    <input type="text" maxlength="1" class="w-12 h-16 text-2xl text-center bg-white border-2 border-gray-100 rounded-2xl focus:border-blue-300 outline-none">
+                    <input type="text" maxlength="1" class="w-12 h-16 text-2xl text-center bg-white border-2 border-gray-100 rounded-2xl focus:border-blue-300 outline-none">
+                    <input type="text" maxlength="1" class="w-12 h-16 text-2xl text-center bg-white border-2 border-gray-100 rounded-2xl focus:border-blue-300 outline-none">
+                    <input type="text" maxlength="1" class="w-12 h-16 text-2xl text-center bg-white border-2 border-gray-100 rounded-2xl focus:border-blue-300 outline-none">
+                    <input type="text" maxlength="1" class="w-12 h-16 text-2xl text-center bg-white border-2 border-gray-100 rounded-2xl focus:border-blue-300 outline-none">                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 寶寶動態牆首頁 -->
+    <div id="page-home" class="page bg-gray-50">
+        <header class="px-6 pt-12 pb-4 bg-white flex justify-between items-center">
+            <h2 class="text-2xl font-bold">小圓圓的日常</h2>
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <i class="fas fa-bell text-blue-500"></i>
+            </div>
+        </header>
+
+        <!-- Stories -->
+        <div class="flex gap-4 px-6 py-4 overflow-x-auto no-scrollbar">
+            <div class="flex flex-col items-center gap-1 min-w-[70px]">
+                <div class="status-ring status-awake">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-14 h-14 rounded-full bg-gray-200">
+                </div>
+                <span class="text-xs font-medium">圓圓</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 min-w-[70px]">
+                <div class="status-ring status-sleep">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" class="w-14 h-14 rounded-full bg-gray-200">
+                </div>
+                <span class="text-xs font-medium">比比</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 min-w-[70px]">
+                <div class="w-[62px] h-[62px] border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center">
+                    <i class="fas fa-plus text-gray-300"></i>
+                </div>
+                <span class="text-xs text-gray-400">新增</span>
+            </div>
+        </div>
+
+        <!-- Feed List -->
+        <div class="px-6 space-y-6">
+            <div class="ios-card overflow-hidden">
+                <div class="p-4 flex items-center gap-3">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-10 h-10 rounded-full">
+                    <div>
+                        <p class="font-bold text-sm">保母 王阿姨</p>
+                        <p class="text-[10px] text-gray-400">10:30 AM · 喝奶紀錄</p>
+                    </div>
+                    <i class="fas fa-ellipsis-h ml-auto text-gray-300"></i>
+                </div>
+                <div class="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-3 py-1 bg-blue-50 text-blue-500 rounded-full text-xs font-bold">🍼 180 ml</span>
+                        <span class="px-3 py-1 bg-gray-50 text-gray-400 rounded-full text-xs font-medium">配方奶</span>
+                    </div>
+                    <p class="text-sm leading-relaxed">今天胃口很好，一口氣就喝完了！喝完後拍嗝也很順利，目前精神愉快在玩健力架。</p>
+                </div>
+            </div>
+
+            <div class="ios-card overflow-hidden">
+                <div class="p-4 flex items-center gap-3">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-10 h-10 rounded-full">
+                    <div>
+                        <p class="font-bold text-sm">保母 王阿姨</p>
+                        <p class="text-[10px] text-gray-400">08:15 AM · 換尿布</p>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold">💩 大便</span>
+                        <span class="px-3 py-1 bg-yellow-50 text-yellow-600 rounded-full text-xs font-bold">質地正常</span>
+                    </div>
+                    <p class="text-sm">換了乾淨的尿布，屁屁有擦護疹膏預防紅屁屁。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 快速紀錄功能中心 -->
+    <div id="page-hub" class="page px-6 pt-12">
+        <header class="mb-8">
+            <h2 class="text-2xl font-bold mb-6">快速紀錄</h2>
+            <div class="flex gap-2 p-1 bg-gray-100 rounded-full overflow-hidden">
+                <button class="flex-1 py-3 bg-white shadow-sm rounded-full text-sm font-bold">小圓圓</button>
+                <button class="flex-1 py-3 text-gray-400 text-sm font-medium">比比</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div onclick="showPage('page-detail')" class="ios-card p-6 flex flex-col items-center justify-center gap-4 bg-blue-50/50">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-baby-bottle text-2xl text-blue-400"></i>
+                </div>
+                <span class="font-bold text-blue-600">餵奶</span>
+            </div>
+            <div class="ios-card p-6 flex flex-col items-center justify-center gap-4 bg-green-50/50">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-poop text-2xl text-green-400"></i>
+                </div>
+                <span class="font-bold text-green-600">尿布</span>
+            </div>
+            <div class="ios-card p-6 flex flex-col items-center justify-center gap-4 bg-purple-50/50">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-moon text-2xl text-purple-400"></i>
+                </div>
+                <span class="font-bold text-purple-600">睡眠</span>
+            </div>
+            <div class="ios-card p-6 flex flex-col items-center justify-center gap-4 bg-yellow-50/50">
+                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-smile text-2xl text-yellow-400"></i>
+                </div>
+                <span class="font-bold text-yellow-600">心情</span>
+            </div>
+            <div class="ios-card p-6 flex flex-col items-center justify-center gap-4 bg-orange-50/50">
+                <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-apple-alt text-2xl text-orange-400"></i>
+                </div>
+                <span class="font-bold text-orange-600">副食品</span>
+            </div>
+            <div class="ios-card p-6 flex flex-col items-center justify-center gap-4 bg-red-50/50">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-briefcase-medical text-2xl text-red-400"></i>
+                </div>
+                <span class="font-bold text-red-600">醫療</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 動作細節填寫頁 -->
+    <div id="page-detail" class="page bg-white">
+        <header class="px-6 pt-12 flex items-center mb-8">
+            <button onclick="showPage('page-hub')" class="w-10 h-10 flex items-center justify-center">
+                <i class="fas fa-chevron-left text-xl"></i>
+            </button>
+            <h2 class="text-xl font-bold mx-auto">餵奶紀錄</h2>
+            <div class="w-10"></div>
+        </header>
+
+        <div class="px-8 flex flex-col items-center">
+            <!-- 巨大數字顯示 -->
+            <div class="text-center mb-10">
+                <div class="flex items-baseline justify-center gap-2">
+                    <span id="volume-display" class="text-7xl font-bold tracking-tighter text-blue-500">180</span>
+                    <span class="text-2xl text-gray-300 font-medium">ml</span>
+                </div>
+                <p class="text-gray-400 mt-2">目前選取的奶量</p>
+            </div>
+
+            <!-- 滑桿 -->
+            <div class="w-full mb-10 px-4">
+                <input type="range" min="0" max="300" step="10" value="180" id="milk-slider" oninput="updateMilk(this.value)">
+                <div class="flex justify-between mt-4 text-[10px] text-gray-300 font-bold uppercase tracking-widest">
+                    <span>0 ml</span>
+                    <span>150 ml</span>
+                    <span>300 ml</span>
+                </div>
+            </div>
+
+            <!-- 快捷選項 -->
+            <div class="flex flex-wrap justify-center gap-3 mb-10">
+                <button onclick="updateMilk(120)" class="px-6 py-3 bg-gray-50 rounded-full text-sm font-bold active:bg-blue-100">120</button>
+                <button onclick="updateMilk(150)" class="px-6 py-3 bg-gray-50 rounded-full text-sm font-bold active:bg-blue-100">150</button>
+                <button onclick="updateMilk(180)" class="px-6 py-3 bg-blue-500 text-white rounded-full text-sm font-bold">180</button>
+                <button onclick="updateMilk(210)" class="px-6 py-3 bg-gray-50 rounded-full text-sm font-bold active:bg-blue-100">210</button>
+            </div>
+
+            <!-- 狀態切換 -->
+            <div class="w-full flex p-1 bg-gray-100 rounded-[32px] mb-8">
+                <button class="flex-1 py-4 bg-white shadow-sm rounded-[28px] font-bold text-sm">配方奶</button>
+                <button class="flex-1 py-4 text-gray-400 font-bold text-sm">母奶</button>
+            </div>
+
+            <!-- 拍照與備註 -->
+            <div class="w-full grid grid-cols-2 gap-4 mb-8">
+                <button class="p-6 bg-gray-50 rounded-[32px] flex flex-col items-center gap-2">
+                    <i class="fas fa-camera text-2xl text-gray-300"></i>
+                    <span class="text-xs text-gray-400">拍攝照片</span>
+                </button>
+                <button class="p-6 bg-gray-50 rounded-[32px] flex flex-col items-center gap-2">
+                    <i class="fas fa-pen-nib text-2xl text-gray-300"></i>
+                    <span class="text-xs text-gray-400">添加備註</span>
+                </button>
+            </div>
+
+            <button onclick="showPage('page-home')" class="w-full py-5 bg-blue-500 text-white font-bold text-lg rounded-[32px] shadow-xl shadow-blue-100 mb-10">
+                確認發布
+            </button>
+        </div>
+    </div>
+
+    <!-- 5. 後台管理：寶寶與帳號列表 -->
+    <div id="page-admin" class="page bg-gray-50 px-6 pt-12">
+        <header class="mb-8">
+            <h2 class="text-2xl font-bold">管理後台</h2>
+            <p class="text-gray-400 text-sm">身分審核與資料維護</p>
+        </header>
+
+        <!-- 待匹配區 -->
+        <div class="mb-10">
+            <div class="flex justify-between items-end mb-4">
+                <h3 class="font-bold text-lg">待處理請求</h3>
+                <span class="text-blue-500 text-xs font-bold">2 位等待中</span>
+            </div>
+            <div class="space-y-3">
+                <div class="ios-card p-4 flex items-center gap-4">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jerry" class="w-12 h-12 rounded-full bg-blue-50">
+                    <div class="flex-1">
+                        <p class="font-bold text-sm">林大為 David</p>
+                        <p class="text-[10px] text-gray-400">來源：Google Login</p>
+                    </div>
+                    <button class="px-4 py-2 bg-blue-500 text-white text-xs font-bold rounded-full">指派</button>
+                </div>
+                <div class="ios-card p-4 flex items-center gap-4 border-l-4 border-yellow-400">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mimi" class="w-12 h-12 rounded-full bg-green-50">
+                    <div class="flex-1">
+                        <p class="font-bold text-sm">陳小美 Mimi</p>
+                        <p class="text-[10px] text-gray-400">來源：LINE Login</p>
+                    </div>
+                    <button class="px-4 py-2 border border-blue-500 text-blue-500 text-xs font-bold rounded-full">邀請碼</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 寶寶列表 -->
+        <div>
+            <h3 class="font-bold text-lg mb-4">寶寶總覽</h3>
+            <div class="space-y-4">
+                <div class="ios-card p-5">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-14 h-14 rounded-2xl bg-gray-100">
+                        <div>
+                            <p class="font-bold">小圓圓</p>
+                            <p class="text-xs text-gray-400">8 個月大 · 男寶寶</p>
+                        </div>
+                        <span class="ml-auto px-2 py-1 bg-green-100 text-green-600 text-[10px] font-bold rounded">已啟用</span>
+                    </div>
+                    <div class="pt-4 border-t border-gray-50 flex justify-between items-center text-xs text-gray-500">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-user-tie"></i>
+                            <span>王阿姨 (保母)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>2 位成員</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ios-card p-5">
+                    <div class="flex items-center gap-4 mb-4 opacity-60">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" class="w-14 h-14 rounded-2xl bg-gray-100">
+                        <div>
+                            <p class="font-bold">比比</p>
+                            <p class="text-xs text-gray-400">1 歲 2 個月 · 女寶寶</p>
+                        </div>
+                        <span class="ml-auto px-2 py-1 bg-gray-100 text-gray-400 text-[10px] font-bold rounded">暫停中</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部導覽列 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 h-[80px] glass-nav flex items-center justify-around px-6 hidden">
+        <button onclick="showPage('page-home')" class="flex flex-col items-center gap-1 text-blue-500">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-[10px] font-bold">首頁</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-300">
+            <i class="fas fa-calendar-alt text-xl"></i>
+            <span class="text-[10px] font-bold">行事曆</span>
+        </button>
+        <button onclick="showPage('page-hub')" class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-200 -mt-8 border-4 border-white">
+            <i class="fas fa-plus text-xl"></i>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-300">
+            <i class="fas fa-chart-line text-xl"></i>
+            <span class="text-[10px] font-bold">數據</span>
+        </button>
+        <button onclick="showPage('page-admin')" class="flex flex-col items-center gap-1 text-gray-300">
+            <i class="fas fa-cog text-xl"></i>
+            <span class="text-[10px] font-bold">管理</span>
+        </button>
+    </nav>
+
+    <script>
+        function showPage(pageId) {
+            // 隱藏所有頁面
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // 顯示指定頁面
+            const targetPage = document.getElementById(pageId);
+            targetPage.classList.add('active');
+
+            // 判斷是否顯示底部導覽 (登入頁與詳情頁不顯示)
+            const nav = document.getElementById('bottom-nav');
+            if (pageId === 'page-login' || pageId === 'page-detail') {
+                nav.classList.add('hidden');
+            } else {
+                nav.classList.remove('hidden');
+            }
+
+            // 更新導覽列按鈕顏色
+            updateNavIcons(pageId);
+            
+            // 滾動到頂部
+            window.scrollTo(0, 0);
+        }
+
+        function updateNavIcons(pageId) {
+            const icons = document.querySelectorAll('#bottom-nav button');
+            icons.forEach(btn => {
+                btn.classList.remove('text-blue-500');
+                btn.classList.add('text-gray-300');
+            });
+
+            if (pageId === 'page-home') icons[0].classList.replace('text-gray-300', 'text-blue-500');
+            if (pageId === 'page-admin') icons[4].classList.replace('text-gray-300', 'text-blue-500');
+        }
+
+        function updateMilk(val) {
+            document.getElementById('volume-display').textContent = val;
+            document.getElementById('milk-slider').value = val;
+        }
+    </script>
+</body>
+</html>

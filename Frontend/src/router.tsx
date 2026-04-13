@@ -4,6 +4,11 @@ import { AdminLayout } from './components/AdminLayout';
 import { UserLayout } from './components/UserLayout';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { QuickRecordPage } from './pages/QuickRecordPage';
+import { RecordDetailPage } from './pages/RecordDetailPage';
+import { CalendarPage } from './pages/CalendarPage';
+import { AnalyticsPage } from './pages/AnalyticsPage';
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { AdminUserFormPage } from './pages/admin/AdminUserFormPage';
 import { AdminPendingPage } from './pages/admin/AdminPendingPage';
@@ -26,19 +31,26 @@ export const AppRouter = () => (
       <Route element={<ProtectedRoute />}>
         <Route element={<UserLayout />}>
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/quick-record" element={<QuickRecordPage />} />
+          <Route path="/record/:type" element={<RecordDetailPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
         </Route>
       </Route>
 
       {/* 後台 (SystemAdmin / Nanny) */}
       <Route element={<ProtectedRoute requiredRoles={ADMIN_ROLES} />}>
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Navigate to="/admin/users" replace />} />
+          <Route index element={<AdminDashboardPage />} />
           <Route path="users" element={<AdminUsersPage />} />
           <Route path="users/new" element={<AdminUserFormPage />} />
           <Route path="users/:id/edit" element={<AdminUserFormPage />} />
           <Route path="pending" element={<AdminPendingPage />} />
         </Route>
       </Route>
+
+      {/* 預設導向首頁 */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </BrowserRouter>
 );

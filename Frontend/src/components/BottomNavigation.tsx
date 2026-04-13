@@ -1,37 +1,65 @@
-import { useNavigate, useLocation } from 'react-router';
-import { Home, Settings } from 'lucide-react';
-import { useUserRoles } from '../hooks/useUserRoles';
+import { useNavigate, useLocation } from "react-router";
+import { Home, Calendar, Plus, BarChart3, Settings } from "lucide-react";
+import { useUserRoles } from "../hooks/useUserRoles";
 
+/// <summary>
+/// 底部導覽列 - iOS 風格玻璃態導覽
+/// </summary>
 export const BottomNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const roles = useUserRoles();
-  const isAdmin = roles.some((r) => r === 'SystemAdmin' || r === 'Nanny');
+  const isAdmin = roles.some((r) => r === "SystemAdmin" || r === "Nanny");
 
   const items = [
-    { icon: Home, label: '首頁', path: '/' },
-    ...(isAdmin ? [{ icon: Settings, label: '後台管理', path: '/admin' }] : []),
+    { icon: Home, label: "首頁", path: "/" },
+    { icon: Calendar, label: "行事曆", path: "/calendar" },
+    { icon: Plus, label: "紀錄", path: "/quick-record", isCentered: true },
+    { icon: BarChart3, label: "數據", path: "/analytics" },
+    ...(isAdmin ? [{ icon: Settings, label: "管理", path: "/admin" }] : []),
   ];
 
+  const filteredItems = isAdmin
+    ? items
+    : items.filter((item) => item.path !== "/admin");
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-      <div className="flex">
-        {items.map(({ icon: Icon, label, path }) => {
-          const active = location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
+    <nav className="fixed bottom-0 left-0 right-0 glass-nav z-50 h-20 flex items-center justify-around px-4">
+      {filteredItems.map(({ icon: Icon, label, path, isCentered }) => {
+        const isActive =
+          location.pathname === path ||
+          (path !== "/" && location.pathname.startsWith(path));
+
+        if (isCentered) {
           return (
             <button
               key={path}
               onClick={() => navigate(path)}
-              className={`flex flex-1 flex-col items-center justify-center py-2 gap-0.5 text-xs transition-colors ${
-                active ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className="w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-200 hover:shadow-xl active:scale-95 transition-all transform -mt-8 border-4 border-white"
+              style={{ backgroundColor: "#3B82F6" }}
+              title="快速紀錄"
             >
-              <Icon size={22} strokeWidth={active ? 2.2 : 1.8} />
-              <span>{label}</span>
+              <Icon size={24} strokeWidth={2} />
             </button>
           );
-        })}
-      </div>
+        }
+
+        return (
+          <button
+            key={path}
+            onClick={() => navigate(path)}
+            className={`flex flex-col items-center justify-center gap-1 py-2 px-3 text-xs transition-colors rounded-lg ${
+              isActive
+                ? "text-babo-primary"
+                : "text-babo-text-light hover:text-babo-text"
+            }`}
+            title={label}
+          >
+            <Icon size={24} strokeWidth={isActive ? 2.2 : 2} />
+            <span className="text-[10px] font-medium">{label}</span>
+          </button>
+        );
+      })}
     </nav>
   );
 };
