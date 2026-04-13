@@ -1,13 +1,14 @@
 # admin-account-management Specification
 
 ## Purpose
+
 TBD - synced from change 2026-04-02-admin-account-management. Update Purpose after review.
 
 ## ADDED Requirements
 
 ### Requirement: 後台帳號列表
 
-系統 SHALL 提供 API `GET /api/admin/users`，回傳所有帳號列表（含已刪除帳號以旗標標示），每筆資料包含：UserID、顯示名稱、角色、啟用狀態、已刪除旗標、目前綁定的登入方式（Google / Line / Email / 手機 / Account）。此 API 需要 `SystemAdmin` 或 `Nanny` 角色。前端顯示為表格列表。
+系統 SHALL 提供 API `GET /api/admin/users`，回傳所有帳號列表（含已刪除帳號以旗標標示），每筆資料包含：UserID、顯示名稱、角色、啟用狀態、已刪除旗標、目前綁定的登入方式（Google / Line / Email / 手機 / Account）。此 API 需要 `SystemAdmin` 或 `Nanny` 角色。前端以卡片列表形式顯示。
 
 #### Scenario: 管理員查看帳號列表
 
