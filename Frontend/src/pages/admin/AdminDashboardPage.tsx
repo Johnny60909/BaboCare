@@ -137,7 +137,9 @@ export const AdminDashboardPage = () => {
                       className="w-14 h-14 rounded-2xl bg-gray-100"
                     />
                     <div className="flex-1">
-                      <p className="font-bold text-babo-text text-base">{baby.name}</p>
+                      <p className="font-bold text-babo-text text-base">
+                        {baby.name}
+                      </p>
                       <p className="text-xs text-babo-text-light">
                         {baby.age} · {baby.gender}
                       </p>
