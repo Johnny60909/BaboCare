@@ -5,3 +5,4 @@
 export * from './useAuth';
 export * from './useAdminUsers';
 export * from './usePendingUsers';
+export * from './useLogout';

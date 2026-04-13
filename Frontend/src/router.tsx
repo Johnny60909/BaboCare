@@ -8,6 +8,7 @@ import { QuickRecordPage } from './pages/QuickRecordPage';
 import { RecordDetailPage } from './pages/RecordDetailPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { AdminUserFormPage } from './pages/admin/AdminUserFormPage';
@@ -35,6 +36,7 @@ export const AppRouter = () => (
           <Route path="/record/:type" element={<RecordDetailPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
       </Route>
 

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router";
-import { Home, Calendar, Plus, BarChart3, Settings } from "lucide-react";
+import { Home, Calendar, Plus, BarChart3, Settings, User } from "lucide-react";
 import { useUserRoles } from "../hooks/useUserRoles";
 
 /// <summary>
@@ -16,6 +16,7 @@ export const BottomNavigation = () => {
     { icon: Calendar, label: "行事曆", path: "/calendar" },
     { icon: Plus, label: "紀錄", path: "/quick-record", isCentered: true },
     { icon: BarChart3, label: "數據", path: "/analytics" },
+    { icon: User, label: "個人", path: "/profile" },
     ...(isAdmin ? [{ icon: Settings, label: "管理", path: "/admin" }] : []),
   ];
 

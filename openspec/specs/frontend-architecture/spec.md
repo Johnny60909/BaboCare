@@ -99,6 +99,166 @@ TBD - created by archiving change audit-and-align-architecture-docs. Update Purp
 
 #### Scenario: Sidebar 切換狀態
 
+系統前端提供個人資料中心頁面，作為使用者快速訪問個人設定和登出功能的入口。該功能 SHALL 遵循 iOS 風格設計，並與現有導航架構保持一致。
+
+### Requirement: 個人資料中心頁面
+
+系統前端 SHALL 提供個人資料中心頁面（`/profile`），並在底部導航欄新增個人圖標。該頁面 SHALL 包含頂部設定菜單、登出選項，並為後續功能（如帳號設定、個人訊息編輯）預留空間。
+
+#### Page: ProfilePage
+
+**Location**: `src/pages/ProfilePage.tsx`
+
+**Purpose**: 提供使用者訪問個人設定和登出功能
+
+**Components & Hooks Used**:
+- `ProfileSettingsMenu` - 頂部設定選單（點擊顯示/隱藏下拉菜單）
+- `useLogout()` - 登出 Mutation Hook
+- `BottomNavigation` - 底部導航欄
+
+**Layout Structure**:
+- 頂部導航欄：只顯示設定圖標（⋮），無返回按鈕、無頁面標題
+- 中間內容區域：空白佔位，用於未來擴展
+- 底部導航欄：固定高度（pb-20），與其他頁面保持一致
+
+#### Component: ProfileSettingsMenu
+
+**Location**: `src/components/ProfileSettingsMenu.tsx`
+
+**Purpose**: 個人資料設定下拉菜單，包含登出選項
+
+**Feature Requirements**:
+- 三點圖標（⋮）按鈕打開/關閉菜單
+- 菜單使用 iOS 卡片風格（`rounded-[20px]`、`shadow-lg shadow-black/10`）
+- 菜單項：紅色登出按鈕（`text-red-600`）
+- 點擊菜單外自動關閉
+- 使用 `useLogout()` Hook 處理登出邏輯
+
+**Props**:
+```typescript
+interface ProfileSettingsMenuProps {
+  settingsMenuRef: RefObject<HTMLDivElement | null>;
+}
+```
+
+#### Scenario: 使用者點擊個人圖標進入個人資料頁面
+
+- **GIVEN** 使用者已登入並在首頁
+- **WHEN** 點擊底部導航欄右側的「個人」圖標
+- **THEN** 進入 `/profile` 路由，顯示個人資料頁面
+
+#### Scenario: 使用者從個人資料頁面登出
+
+- **GIVEN** 使用者在 `/profile` 頁面
+- **WHEN** 點擊右上角設定圖標（⋮），然後點擊紅色「登出」選項
+- **THEN** `useLogout()` Hook 執行：清除 Token、清除 React Query 快取、重定向至 `/login`
+
+#### Scenario: 設定菜單自動關閉
+
+- **GIVEN** 個人資料頁面設定菜單已開啟
+- **WHEN** 點擊菜單外的任何位置
+- **THEN** 菜單自動關閉
+
+### Requirement: 底部導航新增個人圖標
+
+系統前端底部導航欄 SHALL 新增「個人」圖標項目，位於導航欄最右側（在「管理」項之後），點擊時進入 `/profile` 路由。
+
+#### Modification: BottomNavigation 元件
+
+**File**: `src/components/BottomNavigation.tsx`
+
+**Changes**:
+- 導入 `User` 圖標（來自 lucide-react）
+- 在 `navItems` 陣列新增個人資料項目
+  - 圖標: `User`
+  - 標籤: 「個人」
+  - 路由: `/profile`
+  - 位置: 導航欄最右側
+- 樣式與其他導航項保持一致
+
+#### Scenario: 導航欄顯示新個人圖標
+
+- **GIVEN** 前端應用已載入
+- **WHEN** 檢查底部導航欄
+- **THEN** 顯示「個人」圖標，位於導航欄最右側，與其他圖標樣式保持一致
+
+### Requirement: 路由配置更新
+
+系統前端路由配置 SHALL 新增 `/profile` 路由，使用 `ProtectedRoute` 保護，確保只有已登入使用者可訪問。
+
+#### Modification: 路由配置（router.tsx）
+
+**File**: `src/router.tsx`
+
+**Changes**:
+- 導入 `ProfilePage` 組件
+- 在 `UserLayout` 內新增 `/profile` 路由
+- 確保受 `ProtectedRoute` 保護
+
+#### Scenario: 登入使用者訪問個人資料頁面
+
+- **GIVEN** 使用者已登入
+- **WHEN** 導航至 `/profile`
+- **THEN** `ProtectedRoute` 允許訪問，載入 `ProfilePage`
+
+#### Scenario: 未登入使用者訪問個人資料頁面
+
+- **GIVEN** 使用者未登入
+- **WHEN** 嘗試導航至 `/profile`
+- **THEN** `ProtectedRoute` 攔截，重定向至 `/login`
+
+### Requirement: 登出 Hook 實現
+
+系統前端 SHALL 實現 `useLogout()` Custom Hook，用於封裝登出邏輯，包括清除認證狀態、清除快取、重定向至登入頁。
+
+#### Custom Hook: useLogout
+
+**Location**: `src/hooks/queries/useLogout.ts`
+
+**Type**: React Query `useMutation`
+
+**Functionality**:
+1. 清除本地 Token（使用 `clearTokens()` 函式）
+2. 清除 React Query 快取（`queryClient.clear()`）
+3. 成功時重定向至 `/login` 且 `replace: true`
+4. 發生錯誤時仍重定向至 `/login`，確保使用者退出
+
+**Export**: 在 `src/hooks/queries/index.ts` 新增導出
+
+#### Scenario: 使用者成功登出
+
+- **GIVEN** 使用者點擊登出按鈕
+- **WHEN** `useLogout()` Mutation 執行
+- **THEN** Token 被清除、快取被清除、頁面重定向至 `/login`
+
+#### Scenario: 登出過程中發生錯誤
+
+- **GIVEN** 登出過程中出現 API 或其他錯誤
+- **WHEN** Mutation 進入 `onError` 狀態
+- **THEN** 即使出錯，仍重定向至 `/login`，確保使用者退出
+
+### Requirement: iOS 設計風格一致性
+
+系統前端個人資料頁面及其組件 SHALL 遵循統一的 iOS 設計風格，與現有前端設計保持一致。
+
+#### Styling Requirements
+
+- **卡片風格**: 元件使用 `ios-card` 類別、`rounded-[20px]` 或 `rounded-[32px]`
+- **玻璃態效果**: 導航欄使用 `glass-nav` 類別
+- **顏色方案**:
+  - 主要互動: `text-babo-primary` / `#3B82F6`
+  - 危險操作（登出）: `text-red-600`
+  - 背景懸停: `hover:bg-red-50` / `hover:bg-gray-50`
+- **陰影效果**: `shadow-lg shadow-black/5` 至 `shadow-lg shadow-black/10`
+- **字體**: 遵循全局 `html { font-size: 18px; }` 設置
+- **邊框圓角**: 按鈕使用 `rounded-full` 或 `rounded-lg`
+
+#### Scenario: 個人資料頁面風格檢查
+
+- **GIVEN** 個人資料頁面已載入
+- **WHEN** 檢查頁面元素樣式
+- **THEN** 所有元件（設定菜單、按鈕、邊框）都遵循 iOS 風格規範，與前台保持一致
+
 - **GIVEN** 需要實現 Sidebar 的展開/收合狀態
 - **WHEN** 開發者建立 Zustand store 如 `useSidebarStore`
 - **THEN** Store 管理 `isOpen` 布林值，Component 訂閱此狀態並無需使用 useState

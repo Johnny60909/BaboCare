@@ -1,0 +1,10 @@
+---
+id: add-user-profile-page
+name: Add User Profile Page
+status: proposal
+created: 2026-04-13
+artifacts:
+  - proposal.md
+  - design.md
+  - tasks.md
+dependencies: []
