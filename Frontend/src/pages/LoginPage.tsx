@@ -1,9 +1,9 @@
-import { Navigate, Link, useSearchParams } from 'react-router';
-import { useState } from 'react';
-import { useLogin } from '../hooks/useLogin';
-import { getToken } from '../lib/auth';
-import { useNavigate } from 'react-router';
-import { Baby } from 'lucide-react';
+import { Navigate, Link, useSearchParams } from "react-router";
+import { useState } from "react";
+import { useLogin } from "../hooks/useLogin";
+import { getToken } from "../lib/auth";
+import { useNavigate } from "react-router";
+import { Baby } from "lucide-react";
 
 /// <summary>
 /// 登入頁面組件 - 依據設計風格實現 iOS 風格登入頁
@@ -11,10 +11,10 @@ import { Baby } from 'lucide-react';
 export const LoginPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const activated = searchParams.get('activated') === '1';
-  const prefillUsername = searchParams.get('username') ?? '';
+  const activated = searchParams.get("activated") === "1";
+  const prefillUsername = searchParams.get("username") ?? "";
   const [username, setUsername] = useState(prefillUsername);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const { mutate: login, isPending, error } = useLogin();
 
   if (getToken()) {
@@ -25,7 +25,7 @@ export const LoginPage = () => {
     e.preventDefault();
     login(
       { username, password },
-      { onSuccess: () => navigate('/', { replace: true }) }
+      { onSuccess: () => navigate("/", { replace: true }) },
     );
   };
 
@@ -45,10 +45,12 @@ export const LoginPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4 mb-8">
           {activated && (
             <div className="p-4 bg-green-50 border border-green-200 rounded-2xl">
-              <p className="text-sm text-green-700 font-medium">🎉 帳號已成功啟用！請使用帳號密碼登入。</p>
+              <p className="text-sm text-green-700 font-medium">
+                🎉 帳號已成功啟用！請使用帳號密碼登入。
+              </p>
             </div>
           )}
-          
+
           <input
             type="text"
             placeholder="帳號或電子郵件"
@@ -57,7 +59,7 @@ export const LoginPage = () => {
             required
             className="input"
           />
-          
+
           <input
             type="password"
             placeholder="密碼"
@@ -69,7 +71,9 @@ export const LoginPage = () => {
 
           {error && (
             <div className="p-4 bg-red-50 border border-red-200 rounded-2xl">
-              <p className="text-sm text-red-700 font-medium">帳號或密碼錯誤，請重試。</p>
+              <p className="text-sm text-red-700 font-medium">
+                帳號或密碼錯誤，請重試。
+              </p>
             </div>
           )}
 
@@ -78,7 +82,7 @@ export const LoginPage = () => {
             disabled={isPending}
             className="w-full p-5 bg-gray-800 text-white font-bold rounded-[32px] shadow-lg shadow-black/20 active:scale-95 transition-transform disabled:opacity-50"
           >
-            {isPending ? '登入中...' : '登入'}
+            {isPending ? "登入中..." : "登入"}
           </button>
         </form>
 
@@ -92,36 +96,45 @@ export const LoginPage = () => {
           </button>
           <button className="w-full p-4 bg-white border border-gray-200 text-gray-700 font-medium rounded-[32px] flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-gray-50">
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
             </svg>
             Google 帳號登入
           </button>
         </div>
 
-        {/* 邀請碼區 */}
-        <div className="pt-6 border-t border-gray-200">
-          <p className="text-sm text-gray-500 mb-4 text-center">輸入保母提供的邀請碼，開始參與寶寶的每一天</p>
-          <div className="flex justify-between gap-2 px-1">
-            {[...Array(6)].map((_, i) => (
-              <input
-                key={i}
-                type="text"
-                maxLength={1}
-                className="w-12 h-16 text-2xl text-center bg-white border-2 border-gray-100 rounded-2xl focus:border-blue-300 focus:outline-none font-bold"
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* 註冊連結 */}
-        <div className="text-center mt-8">
+        {/* 連結區 */}
+        <div className="text-center mt-8 space-y-3">
           <p className="text-sm text-gray-500">
-            還沒有帳號？{' '}
-            <Link to="/register" className="text-blue-500 font-medium hover:text-blue-600">
+            還沒有帳號？{" "}
+            <Link
+              to="/register"
+              className="text-blue-500 font-medium hover:text-blue-600"
+            >
               初次登入（自行申請）
+            </Link>
+          </p>
+          <p className="text-sm text-gray-500">
+            已申請但尚未驗證？{" "}
+            <Link
+              to="/activate"
+              className="text-blue-500 font-medium hover:text-blue-600"
+            >
+              輸入驗證碼
             </Link>
           </p>
         </div>
