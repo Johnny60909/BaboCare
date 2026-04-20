@@ -2,6 +2,7 @@ using BaboCare.Application.Persistence;
 using BaboCare.Application.Services;
 using BaboCare.Domain.Entities;
 using BaboCare.Infrastructure.Persistence;
+using BaboCare.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Validation.AspNetCore;
 
@@ -9,9 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// Add HttpContext accessor for services that need current user context
+builder.Services.AddHttpContextAccessor();
+
 // Application Services
 builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 builder.Services.AddScoped<IPendingAccountService, PendingAccountService>();
+builder.Services.AddScoped<IBabyService, BabyService>();
+builder.Services.AddScoped<BabyAuthorizationService>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
 // Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>
@@ -90,6 +97,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Configure static files middleware for serving uploaded files
+app.UseStaticFiles();
 
 // Swagger UI
 app.UseSwagger();

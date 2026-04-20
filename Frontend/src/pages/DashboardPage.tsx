@@ -1,25 +1,29 @@
 import { Bell, MoreHorizontal } from "lucide-react";
+import { useGetBabies } from "../hooks/queries/useBabies";
+
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5181";
+const getAvatarUrl = (url?: string | null, fallback?: string) => {
+  if (!url) return fallback ?? "";
+  return url.startsWith("http") ? url : `${API_URL}${url}`;
+};
 
 /// <summary>
 /// 首頁 - 寶寶動態牆首頁
 /// 顯示寶寶的各項記錄和活動動態
 /// </summary>
 export const DashboardPage = () => {
-  // 模擬數據 - 實際應從 API 獲取
-  const babies = [
-    {
-      id: 1,
-      name: "圓圓",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
-      status: "awake",
-    },
-    {
-      id: 2,
-      name: "比比",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka",
-      status: "sleep",
-    },
-  ];
+  const { data: babiesData = [] } = useGetBabies();
+
+  // 將 API 數據轉換為展示格式
+  const babies = babiesData.map((baby) => ({
+    id: baby.id,
+    name: baby.name,
+    avatar: getAvatarUrl(
+      baby.avatarUrl,
+      `https://api.dicebear.com/7.x/avataaars/svg?seed=${baby.id}`,
+    ),
+    status: "awake",
+  }));
 
   const feeds = [
     {
@@ -53,7 +57,9 @@ export const DashboardPage = () => {
     <div className="min-h-screen bg-babo-bg pb-24">
       {/* 頭部 */}
       <header className="bg-white px-6 pt-6 pb-4 flex justify-between items-center shadow-sm">
-        <h2 className="text-2xl font-bold text-babo-text">小圓圓的日常</h2>
+        <h2 className="text-2xl font-bold text-babo-text">
+          {babies.length > 0 ? `${babies[0].name}的日常` : "寶寶日常"}
+        </h2>
         <button className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center hover:bg-blue-200 transition-colors">
           <Bell className="w-5 h-5 text-babo-primary" />
         </button>

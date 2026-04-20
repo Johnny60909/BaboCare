@@ -1,9 +1,10 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
-import { Users, Clock, Home } from "lucide-react";
+import { Users, Clock, Home, Baby } from "lucide-react";
 
 const navItems = [
   { icon: Home, label: "管理首頁", path: "/admin" },
   { icon: Users, label: "帳號管理", path: "/admin/users" },
+  { icon: Baby, label: "寶寶管理", path: "/admin/babies" },
   { icon: Clock, label: "待匹配帳號", path: "/admin/pending" },
 ];
 

@@ -15,6 +15,8 @@ public interface IAppDbContext
     DbSet<ApplicationUser> Users { get; }
     DbSet<ApplicationRole> Roles { get; }
     DbSet<PendingUser> PendingUsers { get; }
+    DbSet<Baby> Babies { get; }
+    DbSet<BabyParent> BabyParents { get; }
     DbSet<IdentityUserRole<string>> UserRoles { get; }
     DbSet<IdentityUserLogin<string>> UserLogins { get; }
     DbSet<IdentityRoleClaim<string>> RoleClaims { get; }

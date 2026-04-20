@@ -5,6 +5,8 @@ obj
 bin
 *.ini
 
+wwwroot
+
 # Frontend
 
 node_modules
