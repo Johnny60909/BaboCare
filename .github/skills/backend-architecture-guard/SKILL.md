@@ -37,7 +37,7 @@ description: Enforces .NET 10, PostgreSQL, DDD (AggregateRoot/Specification), an
   - **Identity Exception**: Identity entities (User/Role) are Non-DDD; they do not use `AggregateRoot`.
   - **Specifications**: Encapsulate complex LINQ queries in `Specification<T>` classes within the Domain layer.
 - **PostgreSQL (Npgsql)**:
-  - **Naming**: Use `snake_case` for all table and column names.
+  - **Naming Convention**: Use **PascalCase** for both Entities and Database Tables/Columns to ensure C# property consistency.
   - **Metadata**: Every entity configuration MUST include `.HasComment()` for tables and columns.
 
 ## 4. Atomic Placement Rules (Backend)
