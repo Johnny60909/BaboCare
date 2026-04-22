@@ -1,6 +1,6 @@
 ---
 name: frontend-architecture-guard
-description: Enforces React SPA (Mantine v8/Tailwind) architecture, MVVM logic separation, and Page feature implementation.
+description: Enforces React SPA (Mantine v8/Tailwind v4) architecture, MVVM logic separation, and Page feature implementation.
 ---
 
 # Frontend Architectural Standards
@@ -8,7 +8,7 @@ description: Enforces React SPA (Mantine v8/Tailwind) architecture, MVVM logic s
 ## 1. Core Tech Stack
 
 - **Framework**: React with React Router v7 (SPA Mode).
-- **UI & Styling**: Mantine UI v8 (Components) + Tailwind CSS (Layout/RWD).
+- **UI & Styling**: Mantine UI v8 (Components) + Tailwind CSS v4(Layout/RWD).
 - **Icons**: `lucide-react`.
 
 ## 2. Logic Separation (MVVM Pattern)
