@@ -1,3 +1,4 @@
+using BaboCare.Application.Dtos.Admin;
 using BaboCare.Application.Dtos.Users;
 using BaboCare.Application.Persistence;
 using BaboCare.Domain.Entities.Users;
@@ -15,6 +16,14 @@ public class AdminUserService : IAdminUserService
     {
         _userManager = userManager;
         _db = db;
+    }
+
+    public async Task<AdminStatsDto> GetAdminStatsAsync()
+    {
+        var totalUsers = await _db.Users.CountAsync(u => !u.IsDeleted);
+        var totalBabies = await _db.Babies.CountAsync();
+        var pendingCount = await _db.PendingUsers.CountAsync();
+        return new AdminStatsDto(totalUsers, totalBabies, pendingCount);
     }
 
     public async Task<List<UserListDto>> GetUsersAsync()

@@ -1,15 +1,5 @@
-import {
-  Container,
-  Title,
-  Button,
-  Card,
-  Stack,
-  Center,
-  Loader,
-  Alert,
-} from "@mantine/core";
-import { IconArrowLeft, IconAlertCircle } from "@tabler/icons-react";
 import { useNavigate, useParams } from "react-router";
+import { ChevronLeft } from "lucide-react";
 import { useGetBabyById } from "../../hooks/queries/Babies/useBabies";
 import BabyForm from "../../components/BabyForm";
 
@@ -18,62 +8,44 @@ export default function AdminBabyEditPage() {
   const { babyId } = useParams<{ babyId: string }>();
   const { data: baby, isLoading, error } = useGetBabyById(babyId);
 
-  const handleBack = () => {
-    navigate("/admin/babies");
-  };
+  const handleBack = () => navigate("/admin/babies");
 
   if (!babyId) {
     return (
-      <Container size="lg" py="xl">
-        <Alert icon={<IconAlertCircle />} color="red" title="錯誤">
-          未提供寶寶 ID
-        </Alert>
-      </Container>
+      <div className="min-h-screen bg-babo-bg px-6 pt-6">
+        <p className="text-red-500">未提供寶寶 ID</p>
+      </div>
     );
   }
 
   if (isLoading) {
-    return (
-      <Container size="lg" py="xl">
-        <Center mih={400}>
-          <Loader />
-        </Center>
-      </Container>
-    );
+    return <div className="p-6 text-center text-babo-text-light">載入中…</div>;
   }
 
   if (error || !baby) {
     return (
-      <Container size="lg" py="xl">
-        <Alert icon={<IconAlertCircle />} color="red" title="錯誤">
-          無法載入寶寶信息
-        </Alert>
-      </Container>
+      <div className="min-h-screen bg-babo-bg px-6 pt-6">
+        <p className="text-red-500">無法載入寶寶資訊</p>
+      </div>
     );
   }
 
   return (
-    <Container size="md" py="xl">
-      <Button
-        variant="subtle"
-        leftSection={<IconArrowLeft size={16} />}
+    <div className="min-h-screen bg-babo-bg pb-24 px-6 pt-6">
+      <button
         onClick={handleBack}
-        mb="lg"
+        className="flex items-center gap-1 text-babo-primary text-sm font-medium mb-6 active:scale-95 transition-all"
       >
-        返回列表
-      </Button>
+        <ChevronLeft size={18} />
+        返回寶寶管理
+      </button>
 
-      <Card withBorder shadow="sm" radius="md" p="lg">
-        <Card.Section withBorder inheritPadding py="lg">
-          <Title order={2}>編輯寶寶: {baby.name}</Title>
-        </Card.Section>
-
-        <Card.Section inheritPadding py="xl">
-          <Stack gap="lg">
-            <BabyForm babyId={babyId} onSuccess={handleBack} />
-          </Stack>
-        </Card.Section>
-      </Card>
-    </Container>
+      <div className="ios-card p-6">
+        <h1 className="text-xl font-bold text-babo-text mb-6">
+          編輯寶寶：{baby.name}
+        </h1>
+        <BabyForm babyId={babyId} onSuccess={handleBack} />
+      </div>
+    </div>
   );
 }

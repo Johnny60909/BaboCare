@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
+import { ChevronLeft } from "lucide-react";
 import {
   useAdminUserDetail,
   useCreateUserMutation,
@@ -37,17 +38,19 @@ export const AdminUserFormPage = () => {
   const createMutation = useCreateUserMutation();
   const updateMutation = useUpdateUserMutation();
 
-  const [form, setForm] = useState<UserFormState>(
-    existingUser
-      ? {
-          ...existingUser,
-          password: "",
-          confirmPassword: "",
-          email: existingUser.email ?? "",
-        }
-      : empty,
-  );
+  const [form, setForm] = useState<UserFormState>(empty);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (existingUser) {
+      setForm({
+        ...existingUser,
+        password: "",
+        confirmPassword: "",
+        email: existingUser.email ?? "",
+      });
+    }
+  }, [existingUser]);
 
   const set = <K extends keyof UserFormState>(
     key: K,
@@ -103,147 +106,156 @@ export const AdminUserFormPage = () => {
     }
   };
 
-  if (loading) return <p className="text-gray-500">載入中…</p>;
+  if (loading)
+    return <div className="p-6 text-center text-babo-text-light">載入中…</div>;
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-3xl font-bold text-babo-text mb-2">
-        {isEdit ? "編輯帳號" : "新增帳號"}
-      </h1>
-      <p className="text-babo-text-light text-sm mb-6">
-        填寫用戶基本資訊和權限設定
-      </p>
+    <div className="min-h-screen bg-babo-bg pb-24 px-6 pt-6">
+      {/* 返回按鈕 */}
+      <button
+        onClick={() => navigate("/admin/users")}
+        className="flex items-center gap-1 text-babo-primary text-sm font-medium mb-6 active:scale-95 transition-all"
+      >
+        <ChevronLeft size={18} />
+        返回帳號管理
+      </button>
 
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-[20px] text-sm text-red-600">
-          {error}
-        </div>
-      )}
+      <div className="max-w-2xl">
+        <h1 className="text-2xl font-bold text-babo-text mb-1">
+          {isEdit ? "編輯帳號" : "新增帳號"}
+        </h1>
+        <p className="text-babo-text-light text-sm mb-6">
+          填寫用戶基本資訊和權限設定
+        </p>
 
-      <form onSubmit={submit} className="flex flex-col gap-6">
-        {/* 帳號密碼 */}
-        <fieldset className="ios-card p-6 flex flex-col gap-4 overflow-hidden">
-          <legend className="px-0 text-lg font-bold text-babo-text">
-            登入資訊
-          </legend>
-          <Field label="帳號 (userName)" required>
-            <input
-              type="text"
-              value={form.userName}
-              onChange={(e) => set("userName", e.target.value)}
-              disabled={isEdit}
-              className="input"
-            />
-          </Field>
-          <Field
-            label={isEdit ? "新密碼（留空不更改）" : "密碼"}
-            required={!isEdit}
-          >
-            <input
-              type="password"
-              value={form.password}
-              onChange={(e) => set("password", e.target.value)}
-              className="input"
-            />
-          </Field>
-        </fieldset>
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-[20px] text-sm text-red-600">
+            {error}
+          </div>
+        )}
 
-        {/* 基本資料 */}
-        <fieldset className="ios-card p-6 flex flex-col gap-4 overflow-hidden">
-          <legend className="px-0 text-lg font-bold text-babo-text">
-            基本資料
-          </legend>
-          <Field label="姓名" required>
-            <input
-              type="text"
-              value={form.displayName}
-              onChange={(e) => set("displayName", e.target.value)}
-              className="input"
-            />
-          </Field>
-          <Field label="性別">
-            <select
-              value={form.gender}
-              onChange={(e) => set("gender", e.target.value)}
-              className="input"
-            >
-              <option value="">請選擇</option>
-              <option value="Male">男</option>
-              <option value="Female">女</option>
-            </select>
-          </Field>
-          <Field label="Email">
-            <input
-              type="email"
-              value={form.email}
-              onChange={(e) => set("email", e.target.value)}
-              className="input"
-            />
-          </Field>
-          <Field label="手機">
-            <input
-              type="tel"
-              value={form.phoneNumber}
-              onChange={(e) => set("phoneNumber", e.target.value)}
-              className="input"
-            />
-          </Field>
-        </fieldset>
-
-        {/* 角色 */}
-        <fieldset className="ios-card p-6 flex flex-col gap-3 overflow-hidden">
-          <legend className="px-0 text-lg font-bold text-babo-text">
-            角色
-          </legend>
-          {ALL_ROLES.map(({ value, label }) => (
-            <label
-              key={value}
-              className="flex items-center gap-3 text-sm cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+        <form onSubmit={submit} className="flex flex-col gap-6">
+          {/* 帳號密碼 */}
+          <fieldset className="ios-card p-6 flex flex-col gap-4 overflow-hidden">
+            <legend className="px-0 text-lg font-bold text-babo-text">
+              登入資訊
+            </legend>
+            <Field label="帳號 (userName)" required>
+              <input
+                type="text"
+                value={form.userName}
+                onChange={(e) => set("userName", e.target.value)}
+                disabled={isEdit}
+                className="input"
+              />
+            </Field>
+            <Field
+              label={isEdit ? "新密碼（留空不更改）" : "密碼"}
+              required={!isEdit}
             >
               <input
-                type="checkbox"
-                checked={form.roles?.includes(value) ?? false}
-                onChange={() => toggleRole(value)}
-                className="w-5 h-5 cursor-pointer"
+                type="password"
+                value={form.password}
+                onChange={(e) => set("password", e.target.value)}
+                className="input"
               />
-              <span className="text-babo-text font-medium">{label}</span>
-            </label>
-          ))}
-        </fieldset>
+            </Field>
+          </fieldset>
 
-        {/* 啟用 */}
-        <label className="flex items-center gap-3 text-sm cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors">
-          <input
-            type="checkbox"
-            checked={form.isActive}
-            onChange={(e) => set("isActive", e.target.checked)}
-            className="w-5 h-5 cursor-pointer"
-          />
-          <span className="text-babo-text font-medium">啟用帳號</span>
-        </label>
+          {/* 基本資料 */}
+          <fieldset className="ios-card p-6 flex flex-col gap-4 overflow-hidden">
+            <legend className="px-0 text-lg font-bold text-babo-text">
+              基本資料
+            </legend>
+            <Field label="姓名" required>
+              <input
+                type="text"
+                value={form.displayName}
+                onChange={(e) => set("displayName", e.target.value)}
+                className="input"
+              />
+            </Field>
+            <Field label="性別">
+              <select
+                value={form.gender}
+                onChange={(e) => set("gender", e.target.value)}
+                className="input"
+              >
+                <option value="">請選擇</option>
+                <option value="Male">男</option>
+                <option value="Female">女</option>
+              </select>
+            </Field>
+            <Field label="Email">
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => set("email", e.target.value)}
+                className="input"
+              />
+            </Field>
+            <Field label="手機">
+              <input
+                type="tel"
+                value={form.phoneNumber}
+                onChange={(e) => set("phoneNumber", e.target.value)}
+                className="input"
+              />
+            </Field>
+          </fieldset>
 
-        <div className="flex gap-3 pt-6 border-t border-gray-100">
-          <button
-            type="submit"
-            disabled={createMutation.isPending || updateMutation.isPending}
-            className="flex-1 px-6 rounded-full py-3.5 text-base font-bold text-white transition-all active:scale-95 shadow-lg disabled:opacity-60"
-            style={{
-              backgroundColor: "#3B82F6",
-            }}
-          >
-            {createMutation.isPending || updateMutation.isPending
-              ? "儲存中…"
-              : "儲存"}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate("/admin/users")}
-            className="flex-1 px-6 py-3.5 rounded-full border-2 border-gray-300 text-babo-text text-base font-bold hover:bg-gray-50 transition-colors active:scale-95"
-          >
-            取消
-          </button>
-        </div>
-      </form>
+          {/* 角色 */}
+          <fieldset className="ios-card p-6 flex flex-col gap-3 overflow-hidden">
+            <legend className="px-0 text-lg font-bold text-babo-text">
+              角色
+            </legend>
+            {ALL_ROLES.map(({ value, label }) => (
+              <label
+                key={value}
+                className="flex items-center gap-3 text-sm cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+              >
+                <input
+                  type="checkbox"
+                  checked={form.roles?.includes(value) ?? false}
+                  onChange={() => toggleRole(value)}
+                  className="w-5 h-5 cursor-pointer"
+                />
+                <span className="text-babo-text font-medium">{label}</span>
+              </label>
+            ))}
+          </fieldset>
+
+          {/* 啟用 */}
+          <label className="flex items-center gap-3 text-sm cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors">
+            <input
+              type="checkbox"
+              checked={form.isActive}
+              onChange={(e) => set("isActive", e.target.checked)}
+              className="w-5 h-5 cursor-pointer"
+            />
+            <span className="text-babo-text font-medium">啟用帳號</span>
+          </label>
+
+          <div className="flex gap-3 pt-6 border-t border-gray-100">
+            <button
+              type="submit"
+              disabled={createMutation.isPending || updateMutation.isPending}
+              className="flex-1 rounded-[32px] py-3.5 text-base font-bold text-white bg-babo-primary active:scale-95 transition-all shadow-md disabled:opacity-60"
+            >
+              {createMutation.isPending || updateMutation.isPending
+                ? "儲存中…"
+                : "儲存"}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/admin/users")}
+              className="flex-1 py-3.5 rounded-[32px] border-2 border-gray-300 text-babo-text text-base font-bold hover:bg-gray-50 transition-colors active:scale-95"
+            >
+              取消
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

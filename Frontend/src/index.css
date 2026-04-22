@@ -1,6 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-babo-bg: #FDFBF7;
+  --color-babo-light: #F3F4F6;
+  --color-babo-text: #4A4A4A;
+  --color-babo-text-light: #999999;
+  --color-babo-primary: #3B82F6;
+  --color-babo-green: #A7D397;
+  --color-babo-purple: #A084E8;
+  --color-babo-yellow: #FBBF24;
+  --color-babo-orange: #F97316;
+  --font-family-noto-tc: "'Noto Sans TC'", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --radius-3xl: 32px;
+  --shadow-ios: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  --scale-98: 0.98;
+}
+
 html {
   font-size: 18px;
 }

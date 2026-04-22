@@ -15,6 +15,7 @@ import { AdminUserFormPage } from "./pages/admin/AdminUserFormPage";
 import { AdminPendingPage } from "./pages/admin/AdminPendingPage";
 import AdminBabiesPage from "./pages/admin/AdminBabiesPage";
 import AdminBabyEditPage from "./pages/admin/AdminBabyEditPage";
+import AdminBabyNewPage from "./pages/admin/AdminBabyNewPage";
 import { PendingRegisterPage } from "./pages/PendingRegisterPage";
 import { ActivatePage } from "./pages/ActivatePage";
 
@@ -50,6 +51,7 @@ export const AppRouter = () => (
           <Route path="users/new" element={<AdminUserFormPage />} />
           <Route path="users/:id/edit" element={<AdminUserFormPage />} />
           <Route path="babies" element={<AdminBabiesPage />} />
+          <Route path="babies/new" element={<AdminBabyNewPage />} />
           <Route path="babies/:babyId" element={<AdminBabyEditPage />} />
           <Route path="pending" element={<AdminPendingPage />} />
         </Route>
