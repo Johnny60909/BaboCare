@@ -20,7 +20,7 @@ import {
   useUpdateBaby,
   useUploadBabyAvatar,
   useGetNannies,
-} from "../hooks/queries/useBabies";
+} from "../hooks/queries/Babies/useBabies";
 import ImageCropModal from "./ImageCropModal";
 import type { ICreateBabyRequest } from "../api/dtos/babyDtos";
 

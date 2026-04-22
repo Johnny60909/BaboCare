@@ -1,6 +1,8 @@
 using BaboCare.Application.Persistence;
 using BaboCare.Domain.Abstractions;
-using BaboCare.Domain.Entities;
+using BaboCare.Domain.Entities.Babies;
+using BaboCare.Domain.Entities.PendingUsers;
+using BaboCare.Domain.Entities.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

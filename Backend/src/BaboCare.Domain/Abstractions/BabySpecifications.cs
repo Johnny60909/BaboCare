@@ -1,4 +1,4 @@
-using BaboCare.Domain.Entities;
+using BaboCare.Domain.Entities.Babies;
 
 namespace BaboCare.Domain.Abstractions;
 

@@ -1,7 +1,8 @@
 using System.Security.Cryptography;
-using BaboCare.Application.Dtos;
+using BaboCare.Application.Dtos.PendingUsers;
 using BaboCare.Application.Persistence;
-using BaboCare.Domain.Entities;
+using BaboCare.Domain.Entities.PendingUsers;
+using BaboCare.Domain.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { IconArrowLeft, IconAlertCircle } from "@tabler/icons-react";
 import { useNavigate, useParams } from "react-router";
-import { useGetBabyById } from "../../hooks/queries/useBabies";
+import { useGetBabyById } from "../../hooks/queries/Babies/useBabies";
 import BabyForm from "../../components/BabyForm";
 
 export default function AdminBabyEditPage() {

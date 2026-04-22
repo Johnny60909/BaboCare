@@ -1,5 +1,4 @@
-using BaboCare.Application.Dtos;
-using BaboCare.Domain.Entities;
+using BaboCare.Application.Dtos.PendingUsers;
 
 namespace BaboCare.Application.Services;
 

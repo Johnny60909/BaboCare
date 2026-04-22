@@ -1,5 +1,6 @@
-using BaboCare.Application.Dtos;
+using BaboCare.Application.Dtos.Babies;
 using BaboCare.Application.Services;
+using BaboCare.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,16 +16,13 @@ public class BabyController : ControllerBase
 {
     private readonly IBabyService _babyService;
     private readonly BabyAuthorizationService _authorizationService;
-    private readonly ILogger<BabyController> _logger;
 
     public BabyController(
         IBabyService babyService,
-        BabyAuthorizationService authorizationService,
-        ILogger<BabyController> logger)
+        BabyAuthorizationService authorizationService)
     {
         _babyService = babyService;
         _authorizationService = authorizationService;
-        _logger = logger;
     }
 
     /// <summary>
@@ -32,18 +30,10 @@ public class BabyController : ControllerBase
     /// GET /api/babies
     /// </summary>
     [HttpGet]
-    public async Task<ActionResult<List<BabyResponseDto>>> GetBabies()
+    public async Task<JsonResponse<List<BabyResponseDto>>> GetBabies()
     {
-        try
-        {
-            var babies = await _babyService.GetAllBabiesAsync();
-            return Ok(babies);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving babies");
-            return StatusCode(500, new { message = "取得寶寶列表時出錯" });
-        }
+        var babies = await _babyService.GetAllBabiesAsync();
+        return JsonResponse<List<BabyResponseDto>>.Success(babies);
     }
 
     /// <summary>
@@ -51,28 +41,20 @@ public class BabyController : ControllerBase
     /// GET /api/babies/{id}
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<BabyResponseDto>> GetBaby(string id)
+    public async Task<JsonResponse<BabyResponseDto>> GetBaby(string id)
     {
-        try
+        if (!await _authorizationService.CanAccessBabyAsync(id))
         {
-            if (!await _authorizationService.CanAccessBabyAsync(id))
-            {
-                return Forbid();
-            }
-
-            var baby = await _babyService.GetBabyByIdAsync(id);
-            if (baby == null)
-            {
-                return NotFound(new { message = $"寶寶不存在: {id}" });
-            }
-
-            return Ok(baby);
+            return JsonResponse<BabyResponseDto>.Fail("無權限訪問此寶寶資訊", ResponseStateEnum.NoPermission);
         }
-        catch (Exception ex)
+
+        var baby = await _babyService.GetBabyByIdAsync(id);
+        if (baby == null)
         {
-            _logger.LogError(ex, "Error retrieving baby {BabyId}", id);
-            return StatusCode(500, new { message = "取得寶寶時出錯" });
+            return JsonResponse<BabyResponseDto>.Fail($"寶寶不存在: {id}", ResponseStateEnum.NotFound);
         }
+
+        return JsonResponse<BabyResponseDto>.Success(baby);
     }
 
     /// <summary>
@@ -80,28 +62,10 @@ public class BabyController : ControllerBase
     /// POST /api/babies
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<BabyResponseDto>> CreateBaby([FromBody] CreateBabyRequestDto request)
+    public async Task<JsonResponse<BabyResponseDto>> CreateBaby([FromBody] CreateBabyRequestDto request)
     {
-        try
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var baby = await _babyService.CreateBabyAsync(request);
-            return CreatedAtAction(nameof(GetBaby), new { id = baby.Id }, baby);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error creating baby");
-            // 在開發環境中返回詳細的異常訊息
-            var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-            var errorMessage = isDevelopment
-                ? $"建立寶寶時出錯: {ex.Message}"
-                : "建立寶寶時出錯";
-            return StatusCode(500, new { message = errorMessage, detail = isDevelopment ? ex.StackTrace : null });
-        }
+        var baby = await _babyService.CreateBabyAsync(request);
+        return JsonResponse<BabyResponseDto>.Success(baby);
     }
 
     /// <summary>
@@ -109,38 +73,15 @@ public class BabyController : ControllerBase
     /// PUT /api/babies/{id}
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<ActionResult<BabyResponseDto>> UpdateBaby(string id, [FromBody] UpdateBabyRequestDto request)
+    public async Task<JsonResponse<BabyResponseDto>> UpdateBaby(string id, [FromBody] UpdateBabyRequestDto request)
     {
-        try
+        if (!await _authorizationService.CanModifyBabyAsync(id))
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            return JsonResponse<BabyResponseDto>.Fail("無權限修改此寶寶資訊", ResponseStateEnum.NoPermission);
+        }
 
-            if (!await _authorizationService.CanModifyBabyAsync(id))
-            {
-                return Forbid();
-            }
-
-            var baby = await _babyService.UpdateBabyAsync(id, request);
-            return Ok(baby);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogWarning(ex, "Baby not found: {BabyId}", id);
-            return NotFound(new { message = ex.Message });
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogWarning(ex, "Unauthorized modification attempt for baby: {BabyId}", id);
-            return Forbid();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating baby {BabyId}", id);
-            return StatusCode(500, new { message = "更新寶寶時出錯" });
-        }
+        var baby = await _babyService.UpdateBabyAsync(id, request);
+        return JsonResponse<BabyResponseDto>.Success(baby);
     }
 
     /// <summary>
@@ -149,28 +90,10 @@ public class BabyController : ControllerBase
     /// </summary>
     [HttpDelete("{id}")]
     [Authorize(Roles = "SystemAdmin")]
-    public async Task<IActionResult> DeleteBaby(string id)
+    public async Task<JsonResponse> DeleteBaby(string id)
     {
-        try
-        {
-            await _babyService.DeleteBabyAsync(id);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogWarning(ex, "Baby not found: {BabyId}", id);
-            return NotFound(new { message = ex.Message });
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogWarning(ex, "Unauthorized deletion attempt for baby: {BabyId}", id);
-            return Forbid();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error deleting baby {BabyId}", id);
-            return StatusCode(500, new { message = "刪除寶寶時出錯" });
-        }
+        await _babyService.DeleteBabyAsync(id);
+        return JsonResponse.Success();
     }
 
     /// <summary>
@@ -178,43 +101,20 @@ public class BabyController : ControllerBase
     /// POST /api/babies/{id}/avatar
     /// </summary>
     [HttpPost("{id}/avatar")]
-    public async Task<IActionResult> UploadAvatar(string id, IFormFile? file)
+    public async Task<JsonResponse<string>> UploadAvatar(string id, IFormFile? file)
     {
-        try
+        if (file == null || file.Length == 0)
         {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest(new { message = "請提供有效的檔案" });
-            }
+            return JsonResponse<string>.Fail("請提供有效的檔案", ResponseStateEnum.Error);
+        }
 
-            if (!await _authorizationService.CanUploadAvatarAsync(id))
-            {
-                return Forbid();
-            }
+        if (!await _authorizationService.CanUploadAvatarAsync(id))
+        {
+            return JsonResponse<string>.Fail("無權限上傳此寶寶的頭像", ResponseStateEnum.NoPermission);
+        }
 
-            var avatarUrl = await _babyService.UploadAvatarAsync(id, file);
-            return Ok(new { avatarUrl = avatarUrl, message = "頭像上傳成功" });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogWarning(ex, "Baby not found: {BabyId}", id);
-            return NotFound(new { message = ex.Message });
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogWarning(ex, "Unauthorized avatar upload attempt for baby: {BabyId}", id);
-            return Forbid();
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning(ex, "Invalid file for baby: {BabyId}", id);
-            return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error uploading avatar for baby {BabyId}", id);
-            return StatusCode(500, new { message = "上傳頭像時出錯" });
-        }
+        var avatarUrl = await _babyService.UploadAvatarAsync(id, file);
+        return JsonResponse<string>.Success(avatarUrl);
     }
 
     /// <summary>
@@ -222,17 +122,9 @@ public class BabyController : ControllerBase
     /// GET /api/babies/stats/count
     /// </summary>
     [HttpGet("stats/count")]
-    public async Task<IActionResult> GetBabyCountByRole()
+    public async Task<JsonResponse<int>> GetBabyCountByRole()
     {
-        try
-        {
-            var count = await _babyService.GetBabyCountByRoleAsync();
-            return Ok(new { count = count });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting baby count");
-            return StatusCode(500, new { message = "取得寶寶計數時出錯" });
-        }
+        var count = await _babyService.GetBabyCountByRoleAsync();
+        return JsonResponse<int>.Success(count);
     }
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Navigate, Link } from "react-router";
-import { useActivatePendingMutation } from "../hooks/queries/usePendingUsers";
+import { useActivatePendingMutation } from "../hooks/queries/PendingUsers/usePendingUsers";
 import { getToken } from "../lib/auth";
 import { CheckCircle2, ArrowLeft } from "lucide-react";
 

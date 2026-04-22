@@ -1,5 +1,5 @@
 import { Bell, MoreHorizontal } from "lucide-react";
-import { useGetBabies } from "../hooks/queries/useBabies";
+import { useGetBabies } from "../hooks/queries/Babies/useBabies";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5181";
 const getAvatarUrl = (url?: string | null, fallback?: string) => {

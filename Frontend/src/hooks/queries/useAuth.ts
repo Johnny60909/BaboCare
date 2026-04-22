@@ -3,7 +3,7 @@
  */
 
 import { useMutation } from '@tanstack/react-query';
-import { authService } from '../../api/services/auth.service';
+import { authService } from '../../api/services/Auth/auth.service';
 import type { LoginParams } from '../../api/dtos/auth.dto';
 import { setRefreshToken, setToken } from '../../lib/auth';
 

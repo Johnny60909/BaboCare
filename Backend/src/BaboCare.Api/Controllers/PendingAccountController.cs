@@ -1,4 +1,4 @@
-using BaboCare.Application.Dtos;
+using BaboCare.Application.Dtos.PendingUsers;
 using BaboCare.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 

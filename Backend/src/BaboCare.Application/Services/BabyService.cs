@@ -1,7 +1,7 @@
-using BaboCare.Application.Dtos;
+using BaboCare.Application.Dtos.Babies;
 using BaboCare.Application.Persistence;
 using BaboCare.Domain.Abstractions;
-using BaboCare.Domain.Entities;
+using BaboCare.Domain.Entities.Babies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;

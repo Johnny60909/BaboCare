@@ -3,5 +3,9 @@
   <Project Path="src\BaboCare.Application\BaboCare.Application.csproj" />
   <Project Path="src\BaboCare.Infrastructure\BaboCare.Infrastructure.csproj" />
   <Project Path="src\BaboCare.Identity\BaboCare.Identity.csproj" />
+  <Folder Name="/test/">
+    <Project Path="tests/BaboCare.Application.Tests/BaboCare.Application.Tests.csproj" />
+    <Project Path="tests/BaboCare.Domain.Tests/BaboCare.Domain.Tests.csproj" />
+  </Folder>
   <Project Path="src\BaboCare.Api\BaboCare.Api.csproj" />
 </Solution>

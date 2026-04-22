@@ -1,6 +1,7 @@
 using BaboCare.Application.Persistence;
 using BaboCare.Application.Services;
-using BaboCare.Domain.Entities;
+using BaboCare.Api.Filters;
+using BaboCare.Domain.Entities.Users;
 using BaboCare.Infrastructure.Persistence;
 using BaboCare.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,11 @@ using OpenIddict.Validation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    // 註冊全域異常過濾器
+    options.Filters.Add<ApiExceptionFilter>();
+});
 
 // Add HttpContext accessor for services that need current user context
 builder.Services.AddHttpContextAccessor();
@@ -90,7 +95,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

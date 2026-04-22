@@ -1,6 +1,8 @@
 namespace BaboCare.Application.Persistence;
 
-using BaboCare.Domain.Entities;
+using BaboCare.Domain.Entities.Babies;
+using BaboCare.Domain.Entities.PendingUsers;
+using BaboCare.Domain.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;

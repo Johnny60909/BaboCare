@@ -1,6 +1,6 @@
-using BaboCare.Application.Dtos;
+using BaboCare.Application.Dtos.Users;
 using BaboCare.Application.Persistence;
-using BaboCare.Domain.Entities;
+using BaboCare.Domain.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

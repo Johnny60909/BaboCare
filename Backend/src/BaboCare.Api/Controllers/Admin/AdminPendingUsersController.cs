@@ -1,7 +1,8 @@
-using BaboCare.Application.Dtos;
+using BaboCare.Application.Dtos.PendingUsers;
 using BaboCare.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BaboCare.Api.Models;
 
 namespace BaboCare.Api.Controllers.Admin;
 

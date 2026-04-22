@@ -3,7 +3,7 @@ import {
   usePendingUsers,
   useGenerateInviteCodeMutation,
   useRemovePendingUserMutation,
-} from "../../hooks/queries/usePendingUsers";
+} from "../../hooks/queries/PendingUsers/usePendingUsers";
 
 const sourceLabel: Record<string, string> = {
   Google: "Google",

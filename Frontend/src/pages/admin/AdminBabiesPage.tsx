@@ -11,7 +11,10 @@ import {
 import { IconEdit, IconTrash, IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useGetBabies, useDeleteBaby } from "../../hooks/queries/useBabies";
+import {
+  useGetBabies,
+  useDeleteBaby,
+} from "../../hooks/queries/Babies/useBabies";
 import BabyForm from "../../components/BabyForm";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";

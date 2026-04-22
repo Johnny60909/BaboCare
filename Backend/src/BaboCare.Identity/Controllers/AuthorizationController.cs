@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using BaboCare.Domain.Entities;
+using BaboCare.Domain.Entities.Users;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;

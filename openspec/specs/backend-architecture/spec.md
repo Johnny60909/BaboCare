@@ -1,11 +1,15 @@
 # backend-architecture Specification
 
 ## Purpose
+
 TBD - created by archiving change audit-and-align-architecture-docs. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: 後端遵循 Clean Architecture 五層設計
 
 系統後端 SHALL 遵循以下層級結構，層級之間按定義的依賴規則單向依賴：
+
 - **Domain 層**（零依賴）: 包含 `AggregateRoot`、`Specification` 基類、Entity 定義
 - **Application 層**（依賴 Domain）: 定義 `IAppDbContext`、Service 接口、DTO 定義
 - **Infrastructure 層**（依賴 Application + Domain）: 實現 EF Core `AppDbContext`、Entity Configurations、Database Migrations
@@ -27,6 +31,7 @@ TBD - created by archiving change audit-and-align-architecture-docs. Update Purp
 ### Requirement: DTO 組織遵循模組封裝原則
 
 系統 SHALL 將 Data Transfer Objects 組織在對應的層級，以維持模組獨立性：
+
 - **核心業務 DTO**（如帳號管理、待驗證帳號）: 放在 `BaboCare.Application/Dtos/`
 - **身份驗證 DTO**（如 LoginRequest、TokenResponse）: 放在 `BaboCare.Identity/Dtos/` 以維持 Identity 模組獨立
 
@@ -100,3 +105,51 @@ TBD - created by archiving change audit-and-align-architecture-docs. Update Purp
 - **WHEN** Service 呼叫 Repository 並傳遞 specification
 - **THEN** Specification 封裝 Where 條件、排序、Skip/Take，程式碼簡潔易懂
 
+### Requirement: CORS 配置支持開發與生產環境
+
+系統 Api 層 SHALL 配置 CORS（Cross-Origin Resource Sharing）策略，支持前端開發環境的多個本地埠，同時在生產環境中限制跨域請求，確保安全性和開發便利性的平衡。
+
+#### Development Configuration
+
+在開發環境中，Program.cs 的 CORS 配置 SHALL 允許來自本地開發埠的請求：
+
+```csharp
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+```
+
+#### Scenario: 開發環境前端跨域請求成功
+
+- **GIVEN** 前端應用執行在 `http://localhost:5174`
+- **WHEN** 發起 POST 請求到 `http://localhost:5181/api/account/pending/register`
+- **THEN** 伺服器返回 CORS 預檢回應 (HTTP 204)，包含 `Access-Control-Allow-Origin` 標頭，允許跨域請求
+
+#### Scenario: 生產環境限制跨域請求
+
+- **GIVEN** API 部署在生產環境
+- **WHEN** 請求來自未授權的來源（如外部網域）
+- **THEN** 伺服器不返回 CORS 標頭，瀏覽器阻止請求
+
+#### Middleware Configuration
+
+CORS 中間件 SHALL 在 Program.cs 中正確配置，位於身份驗證和授權中間件之前：
+
+```csharp
+app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+```
+
+#### Scenario: CORS 中間件執行順序正確
+
+- **GIVEN** 新的 API 端點已建立
+- **WHEN** 前端發起跨域請求
+- **THEN** CORS 中間件首先驗證來源並設置回應標頭，後續中間件執行認證和授權

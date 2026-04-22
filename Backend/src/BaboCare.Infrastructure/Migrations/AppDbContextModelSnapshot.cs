@@ -147,43 +147,56 @@ namespace BaboCare.Infrastructure.Migrations
             modelBuilder.Entity("BaboCare.Domain.Entities.Baby", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(26)");
+                        .HasColumnType("varchar(26)")
+                        .HasComment("主鍵 (ULID)");
 
                     b.Property<string>("AvatarUrl")
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("varchar(500)")
+                        .HasComment("大頭照 URL");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasComment("建立時間");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("varchar(26)");
+                        .HasColumnType("varchar(26)")
+                        .HasComment("建立者 ID");
 
                     b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasComment("出生日期");
 
                     b.Property<string>("Gender")
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(50)")
+                        .HasComment("性別");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasComment("嬰兒姓名");
 
                     b.Property<string>("NannyId")
-                        .HasColumnType("varchar(26)");
+                        .HasColumnType("varchar(26)")
+                        .HasComment("負責的保母 ID");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasComment("最後更新時間");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
-                        .HasColumnType("varchar(26)");
+                        .HasColumnType("varchar(26)")
+                        .HasComment("最後更新者 ID");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NannyId");
 
-                    b.ToTable("Babies", "public");
+                    b.ToTable("Babies", "public", t =>
+                        {
+                            t.HasComment("嬰兒基本資料表");
+                        });
                 });
 
             modelBuilder.Entity("BaboCare.Domain.Entities.BabyParent", b =>
@@ -613,7 +626,7 @@ namespace BaboCare.Infrastructure.Migrations
                     b.HasOne("BaboCare.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("NannyId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("BaboCare.Domain.Entities.BabyParent", b =>

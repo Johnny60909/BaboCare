@@ -1,4 +1,4 @@
-using BaboCare.Application.Dtos;
+using BaboCare.Application.Dtos.Babies;
 using Microsoft.AspNetCore.Http;
 
 namespace BaboCare.Application.Services;

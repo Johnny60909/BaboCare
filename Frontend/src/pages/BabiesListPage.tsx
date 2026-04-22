@@ -12,7 +12,7 @@ import {
 import {
   useGetBabies,
   useGetBabyCountByRole,
-} from "../hooks/queries/useBabies";
+} from "../hooks/queries/Babies/useBabies";
 import { useNavigate } from "react-router";
 
 export default function BabiesListPage() {

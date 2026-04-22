@@ -1,4 +1,4 @@
-using BaboCare.Domain.Entities;
+using BaboCare.Domain.Entities.Users;
 using BaboCare.Infrastructure.Persistence;
 using BaboCare.Identity.Services;
 using Microsoft.AspNetCore.Identity;

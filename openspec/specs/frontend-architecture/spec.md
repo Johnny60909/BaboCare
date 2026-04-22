@@ -1,11 +1,15 @@
 # frontend-architecture Specification
 
 ## Purpose
+
 TBD - created by archiving change audit-and-align-architecture-docs. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: 前端遵循 React + TypeScript 的組件堆棧
 
 系統前端 SHALL 使用以下技術堆棧：
+
 - **框架**: React 19.2.4 with React Router 7.13.2（SPA 模式）
 - **UI 元件庫**: Mantine UI 8.3.18（非 v7）
 - **樣式方案**: Tailwind CSS 4.2.2（Utility-first layouts）
@@ -29,6 +33,7 @@ TBD - created by archiving change audit-and-align-architecture-docs. Update Purp
 ### Requirement: 組件與邏輯分離（MVVM 模式）
 
 系統前端 SHALL 遵循 MVVM（Model-View-ViewModel）模式，清晰分離表現層與業務邏輯：
+
 - **View** (.tsx 檔案)：只負責 UI 渲染，不含複雜邏輯或原始 `useEffect` 資料取得
 - **Logic** (.ts 檔案 - Custom Hooks)：負責 API 呼叫、狀態計算、Form 驗證、事件觸發
 - **Data** (DTO)：定義型別安全的資料結構
@@ -77,6 +82,109 @@ TBD - created by archiving change audit-and-align-architecture-docs. Update Purp
 - **WHEN** 頁面的 Custom Hook 呼叫 `adminUserService.getUsers()`
 - **THEN** Hook 返回查詢結果，Component 只負責渲染
 
+### Requirement: API 客戶端與統一響應協議 (apiClient.ts)
+
+系統前端 SHALL 使用 `src/lib/apiClient.ts` 作為中央 HTTP 客戶端，實現 Bearer Token 管理、響應攔截、自動 Token 刷新，並與後端的 `JsonResponse<T>` 協議整合。
+
+#### Client Configuration
+
+`apiClient.ts` 必須包含以下組件：
+
+1. **ResponseStateEnum** - 與後端一致的響應狀態碼定義
+2. **JsonResponse<T>** 和 **JsonTableResponse<T>** - 類型定義（支援前端類型檢查）
+3. **handleApiResponse<T>(response)** - 統一響應處理函式，根據 state 值進行分流
+4. **Request 攔截器** - 自動添加 Bearer Token 標頭
+5. **Response 攔截器** - 處理 401 錯誤、自動使用 refresh_token 重新申請 access_token
+
+#### Implementation Details
+
+```typescript
+// src/lib/apiClient.ts
+export enum ResponseStateEnum {
+  Success = 111,
+  NotFound = 493,
+  NoPermission = 495,
+  Error = 999,
+}
+
+export interface JsonResponse<T = any> {
+  state: ResponseStateEnum;
+  message: string | null;
+  result: T;
+}
+
+export interface JsonTableResponse<T = any> extends JsonResponse<T[]> {
+  total: number;
+}
+
+export const handleApiResponse = <T>(
+  response: AxiosResponse<JsonResponse<T>>,
+): T => {
+  const { state, message, result } = response.data;
+
+  switch (state) {
+    case ResponseStateEnum.Success:
+      return result;
+    case ResponseStateEnum.NotFound:
+      console.warn(message || "Resource Not Found");
+      return null as T;
+    case ResponseStateEnum.NoPermission:
+      window.location.href = "/";
+      throw new Error("No Permission");
+    case ResponseStateEnum.Error:
+    default:
+      throw new Error(message || "API Error");
+  }
+};
+```
+
+#### Service Integration Pattern
+
+每個 Service 必須遵循以下模式：
+
+```typescript
+// src/api/services/Babies/babyService.ts
+import apiClient, {
+  handleApiResponse,
+  type JsonResponse,
+} from "../../../lib/apiClient";
+
+export const babyService = {
+  async getBabies(signal?: AbortSignal): Promise<IBaby[]> {
+    const response = await apiClient.get<JsonResponse<IBaby[]>>("/api/babies", {
+      signal,
+    });
+    return handleApiResponse(response);
+  },
+
+  async createBaby(request: ICreateBabyRequest): Promise<IBaby> {
+    const response = await apiClient.post<JsonResponse<IBaby>>(
+      "/api/babies",
+      request,
+    );
+    return handleApiResponse(response);
+  },
+};
+```
+
+#### Scenario: Service 正確使用 apiClient
+
+- **GIVEN** 需要建立帳號管理 Service
+- **WHEN** 開發者在 Service 中呼叫 apiClient
+- **THEN** Service 使用 `apiClient.get/post/put/delete<JsonResponse<DTO>>`，並通過 `handleApiResponse` 轉換響應
+
+#### Scenario: 自動 Token 刷新
+
+- **GIVEN** API 請求返回 401 Unauthorized
+- **WHEN** Response 攔截器檢測到 401 狀態
+- **THEN** 攔截器自動使用 refresh_token 申請新 access_token，並重試原請求
+
+#### Scenario: 無權限重定向
+
+- **GIVEN** API 返回 JsonResponse { state: 495, message: "No Permission" }
+- **WHEN** `handleApiResponse` 處理此響應
+- **THEN** 自動重定向至首頁 (`/`)，並清除相關授權狀態
+
 ### Requirement: 使用 TanStack Query 管理伺服器狀態
 
 系統前端 SHALL 使用 TanStack Query (React Query) 管理所有伺服器狀態（API 回應資料），包括快取、同步、重試邏輯。Custom Hooks 位於 `src/hooks/queries/` 目錄，每個 Hook 包裝 `useQuery` 或 `useMutation`。
@@ -112,11 +220,13 @@ TBD - created by archiving change audit-and-align-architecture-docs. Update Purp
 **Purpose**: 提供使用者訪問個人設定和登出功能
 
 **Components & Hooks Used**:
+
 - `ProfileSettingsMenu` - 頂部設定選單（點擊顯示/隱藏下拉菜單）
 - `useLogout()` - 登出 Mutation Hook
 - `BottomNavigation` - 底部導航欄
 
 **Layout Structure**:
+
 - 頂部導航欄：只顯示設定圖標（⋮），無返回按鈕、無頁面標題
 - 中間內容區域：空白佔位，用於未來擴展
 - 底部導航欄：固定高度（pb-20），與其他頁面保持一致
@@ -128,6 +238,7 @@ TBD - created by archiving change audit-and-align-architecture-docs. Update Purp
 **Purpose**: 個人資料設定下拉菜單，包含登出選項
 
 **Feature Requirements**:
+
 - 三點圖標（⋮）按鈕打開/關閉菜單
 - 菜單使用 iOS 卡片風格（`rounded-[20px]`、`shadow-lg shadow-black/10`）
 - 菜單項：紅色登出按鈕（`text-red-600`）
@@ -135,6 +246,7 @@ TBD - created by archiving change audit-and-align-architecture-docs. Update Purp
 - 使用 `useLogout()` Hook 處理登出邏輯
 
 **Props**:
+
 ```typescript
 interface ProfileSettingsMenuProps {
   settingsMenuRef: RefObject<HTMLDivElement | null>;
@@ -168,6 +280,7 @@ interface ProfileSettingsMenuProps {
 **File**: `src/components/BottomNavigation.tsx`
 
 **Changes**:
+
 - 導入 `User` 圖標（來自 lucide-react）
 - 在 `navItems` 陣列新增個人資料項目
   - 圖標: `User`
@@ -191,6 +304,7 @@ interface ProfileSettingsMenuProps {
 **File**: `src/router.tsx`
 
 **Changes**:
+
 - 導入 `ProfilePage` 組件
 - 在 `UserLayout` 內新增 `/profile` 路由
 - 確保受 `ProtectedRoute` 保護
@@ -218,6 +332,7 @@ interface ProfileSettingsMenuProps {
 **Type**: React Query `useMutation`
 
 **Functionality**:
+
 1. 清除本地 Token（使用 `clearTokens()` 函式）
 2. 清除 React Query 快取（`queryClient.clear()`）
 3. 成功時重定向至 `/login` 且 `replace: true`
@@ -284,4 +399,3 @@ interface ProfileSettingsMenuProps {
 - **GIVEN** 頁面需要在手機和桌面上有不同佈局
 - **WHEN** 開發者使用 Tailwind 工具類
 - **THEN** 使用 `md:flex-row flex-col` 等響應式工具，Mantine 負責元件高階結構
-
