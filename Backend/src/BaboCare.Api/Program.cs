@@ -24,6 +24,7 @@ builder.Services.AddScoped<IPendingAccountService, PendingAccountService>();
 builder.Services.AddScoped<IBabyService, BabyService>();
 builder.Services.AddScoped<BabyAuthorizationService>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IActivityService, ActivityService>();
 
 // Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>

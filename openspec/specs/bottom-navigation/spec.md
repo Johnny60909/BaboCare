@@ -42,3 +42,28 @@ TBD - synced from change 2026-04-02-admin-account-management. Update Purpose aft
 - **GIVEN** 用戶已登入，JWT `role` Claim 為 `Parent`（不含管理員或保母）
 - **WHEN** 用戶查看底部導覽列
 - **THEN** 底部導覽列不顯示「後台管理」Icon
+
+### 需求：「+」按鈕建立寶寶活動 ("+" button to create baby activity)
+
+系統應 (SHALL) 在底部導覽列中為授權照護者顯示一個「+」按鈕。點擊該按鈕將導覽至活動建立頁面。
+
+#### 場景：照護者在導覽列看到「+」按鈕 (Caregiver sees "+" button in navigation)
+
+- **當 (WHEN)** 授權照護者查看首頁時
+- **則 (THEN)** 「+」按鈕出現在底部導覽列中
+
+#### 場景：「+」按鈕開啟活動建立頁面 ("+" button opens activity creation page)
+
+- **當 (WHEN)** 照護者點擊底部導覽列中的「+」按鈕時
+- **則 (THEN)** 系統導覽至活動建立頁面，用戶可在此選擇寶寶和活動類型
+
+#### 場景：「+」按鈕在導覽列中的位置 ("+" button position in navigation bar)
+
+- **當 (WHEN)** 顯示底部導覽列時
+- **則 (THEN)** 「+」按鈕顯眼地出現在導覽列中（居中或最右側）
+- **則 (THEN)** 「+」按鈕不遮蔽現有的導覽項目（首頁、管理圖示）
+
+#### 場景：僅照護者可見「+」按鈕 (Only caregivers see "+" button)
+
+- **當 (WHEN)** 沒有照護者權限的用戶查看首頁時
+- **則 (THEN)** 底部導覽列不顯示「+」按鈕

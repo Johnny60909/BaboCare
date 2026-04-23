@@ -1,5 +1,6 @@
 using BaboCare.Application.Persistence;
 using BaboCare.Domain.Abstractions;
+using BaboCare.Domain.Entities.Activities;
 using BaboCare.Domain.Entities.Babies;
 using BaboCare.Domain.Entities.PendingUsers;
 using BaboCare.Domain.Entities.Users;
@@ -24,6 +25,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<PendingUser> PendingUsers => Set<PendingUser>();
     public DbSet<Baby> Babies => Set<Baby>();
     public DbSet<BabyParent> BabyParents => Set<BabyParent>();
+    public DbSet<Activity> Activities => Set<Activity>();
 
     // Expose base DbSets for IAppDbContext
     DbSet<IdentityUserRole<string>> IAppDbContext.UserRoles => Set<IdentityUserRole<string>>();

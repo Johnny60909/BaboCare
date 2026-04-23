@@ -4,6 +4,7 @@ import { AdminLayout } from "./components/AdminLayout";
 import { UserLayout } from "./components/UserLayout";
 import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { ActivityCreationPage } from "./pages/ActivityCreationPage";
 import { QuickRecordPage } from "./pages/QuickRecordPage";
 import { RecordDetailPage } from "./pages/RecordDetailPage";
 import { CalendarPage } from "./pages/CalendarPage";
@@ -33,6 +34,7 @@ export const AppRouter = () => (
 
       {/* 一般登入使用者 */}
       <Route element={<ProtectedRoute />}>
+        <Route path="/activity/new" element={<ActivityCreationPage />} />
         <Route element={<UserLayout />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/quick-record" element={<QuickRecordPage />} />

@@ -1,5 +1,6 @@
 namespace BaboCare.Application.Persistence;
 
+using BaboCare.Domain.Entities.Activities;
 using BaboCare.Domain.Entities.Babies;
 using BaboCare.Domain.Entities.PendingUsers;
 using BaboCare.Domain.Entities.Users;
@@ -19,6 +20,7 @@ public interface IAppDbContext
     DbSet<PendingUser> PendingUsers { get; }
     DbSet<Baby> Babies { get; }
     DbSet<BabyParent> BabyParents { get; }
+    DbSet<Activity> Activities { get; }
     DbSet<IdentityUserRole<string>> UserRoles { get; }
     DbSet<IdentityUserLogin<string>> UserLogins { get; }
     DbSet<IdentityRoleClaim<string>> RoleClaims { get; }

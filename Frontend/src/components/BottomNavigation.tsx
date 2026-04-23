@@ -14,15 +14,14 @@ export const BottomNavigation = () => {
   const items = [
     { icon: Home, label: "首頁", path: "/" },
     { icon: Calendar, label: "行事曆", path: "/calendar" },
-    { icon: Plus, label: "紀錄", path: "/quick-record", isCentered: true },
+    // 「+」按鈕：僅 Nanny 與 SystemAdmin 可建立活動
+    ...(isAdmin ? [{ icon: Plus, label: "新增動態", path: "/activity/new", isCentered: true }] : []),
     { icon: BarChart3, label: "數據", path: "/analytics" },
     { icon: User, label: "個人", path: "/profile" },
     ...(isAdmin ? [{ icon: Settings, label: "管理", path: "/admin" }] : []),
   ];
 
-  const filteredItems = isAdmin
-    ? items
-    : items.filter((item) => item.path !== "/admin");
+  const filteredItems = items.filter((item) => item.path !== "/admin" || isAdmin);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 glass-nav z-50 h-20 flex items-center justify-around px-4">
