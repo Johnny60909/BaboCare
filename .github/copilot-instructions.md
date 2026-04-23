@@ -33,6 +33,7 @@ Before performing any task, identify the layer and trigger the corresponding ski
       - **Backend**: Generate xUnit tests using `AwesomeAssertions` to validate logic & state transitions.
       - **Frontend**: Use **Chrome DevTools MCP** to inspect DOM rendering, XHR calls, and console logs.
     - **Self-Correction**: If tests fail (e.g., failing assertions or React warnings), you MUST fix the code and re-verify.
+    - **Cleanup**: You MUST release all file locks and kill server processes immediately after verification.
 
 ## 3. Completion Signal
 

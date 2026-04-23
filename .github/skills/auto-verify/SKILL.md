@@ -27,3 +27,11 @@ Use this skill when you need to:
 
 - **Tooling**: Use `AwesomeAssertions` for readable, fluent test results.
 - **Mocking**: Use `NSubstitute` for service dependencies.
+
+## Resource Lifecycle Management (Anti-Lock Protocol)
+
+To prevent file locks and port conflicts with the user:
+
+1. **Pre-Verify**: Before starting any site, check if the Port (e.g., 5173, 5001) is occupied.
+2. **Post-Verify (Crucial)**: Once testing is complete, you MUST explicitly kill the process.
+3. **Ghost Process Check**: Before ending the session, ensure no background terminal tasks are still running.
