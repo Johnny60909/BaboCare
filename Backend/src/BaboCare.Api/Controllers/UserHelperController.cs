@@ -2,6 +2,7 @@ using BaboCare.Application.Dtos.Users;
 using BaboCare.Application.Dtos.PendingUsers;
 using BaboCare.Application.Persistence;
 using BaboCare.Domain.Entities.Users;
+using BaboCare.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -36,14 +37,14 @@ public class UserHelperController : ControllerBase
     /// GET /api/users/nannies
     /// </summary>
     [HttpGet("nannies")]
-    public async Task<ActionResult<List<object>>> GetNannies()
+    public async Task<JsonResponse<List<NannyDto>>> GetNannies()
     {
         try
         {
             var nanny = await _roleManager.FindByNameAsync("Nanny");
             if (nanny == null)
             {
-                return Ok(new List<object>());
+                return JsonResponse<List<NannyDto>>.Success(new List<NannyDto>());
             }
 
             var nannies = await _dbContext.UserRoles
@@ -51,20 +52,21 @@ public class UserHelperController : ControllerBase
                 .Join(_dbContext.Users,
                     ur => ur.UserId,
                     u => u.Id,
-                    (ur, u) => new
-                    {
-                        id = u.Id,
-                        displayName = u.DisplayName ?? u.UserName,
-                        userName = u.UserName
-                    })
+                    (ur, u) => new { ur, u })
+                .Where(x => !x.u.IsDeleted && x.u.IsActive)
+                .Select(x => new NannyDto(
+                    x.u.Id,
+                    x.u.DisplayName ?? x.u.UserName,
+                    x.u.UserName
+                ))
                 .ToListAsync();
 
-            return Ok(nannies);
+            return JsonResponse<List<NannyDto>>.Success(nannies);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving nannies");
-            return StatusCode(500, new { message = "取得保母列表時出錯" });
+            return JsonResponse<List<NannyDto>>.Fail("取得保母列表時出錯", ResponseStateEnum.Error);
         }
     }
 
@@ -73,14 +75,14 @@ public class UserHelperController : ControllerBase
     /// GET /api/users/parents
     /// </summary>
     [HttpGet("parents")]
-    public async Task<ActionResult<List<object>>> GetParents()
+    public async Task<JsonResponse<List<ParentDto>>> GetParents()
     {
         try
         {
             var parent = await _roleManager.FindByNameAsync("Parent");
             if (parent == null)
             {
-                return Ok(new List<object>());
+                return JsonResponse<List<ParentDto>>.Success(new List<ParentDto>());
             }
 
             var parents = await _dbContext.UserRoles
@@ -88,20 +90,21 @@ public class UserHelperController : ControllerBase
                 .Join(_dbContext.Users,
                     ur => ur.UserId,
                     u => u.Id,
-                    (ur, u) => new
-                    {
-                        id = u.Id,
-                        displayName = u.DisplayName ?? u.UserName,
-                        userName = u.UserName
-                    })
+                    (ur, u) => new { ur, u })
+                .Where(x => !x.u.IsDeleted && x.u.IsActive)
+                .Select(x => new ParentDto(
+                    x.u.Id,
+                    x.u.DisplayName ?? x.u.UserName,
+                    x.u.UserName
+                ))
                 .ToListAsync();
 
-            return Ok(parents);
+            return JsonResponse<List<ParentDto>>.Success(parents);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving parents");
-            return StatusCode(500, new { message = "取得家長列表時出錯" });
+            return JsonResponse<List<ParentDto>>.Fail("取得家長列表時出錯", ResponseStateEnum.Error);
         }
     }
 }

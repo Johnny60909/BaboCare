@@ -31,9 +31,14 @@ html {
     @apply w-full rounded-[32px] bg-gray-100 px-5 py-3.5 text-sm outline-none focus:ring-2 focus:ring-blue-200 focus:bg-white transition-all;
   }
 
+  /* Mantine 風格表單輸入框（後台用） */
+  .mantine-form-input {
+    @apply w-full bg-[#F8F9FA] border border-[#E9ECEF] rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-400 transition-colors;
+  }
+
   /* iOS 卡片风格 */
   .ios-card {
-    @apply bg-white rounded-[32px] shadow-md shadow-black/5 transition-transform active:scale-98;
+    @apply bg-white rounded-[32px] shadow-md shadow-black/5 transition-opacity active:opacity-90;
   }
 
   /* 玻璃态导航栏 */

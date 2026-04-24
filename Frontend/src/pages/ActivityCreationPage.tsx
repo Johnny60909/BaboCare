@@ -7,6 +7,7 @@ import {
   ActivityType,
   EatingOption,
   MoodOption,
+  type ActivityTypeValue,
 } from "../api/dtos/Activities/activityDtos";
 import { activityService } from "../api/services/Activities/activityService";
 import { useGetBabies } from "../hooks/queries/Babies/useBabies";
@@ -84,7 +85,9 @@ export const ActivityCreationPage = () => {
   // 'hub' = 功能選擇頁，'detail' = 詳細輸入頁
   const [view, setView] = useState<"hub" | "detail">("hub");
   const [selectedBabyId, setSelectedBabyId] = useState<string | null>(null);
-  const [selectedType, setSelectedType] = useState<ActivityType | null>(null);
+  const [selectedType, setSelectedType] = useState<ActivityTypeValue | null>(
+    null,
+  );
   const [typeOption, setTypeOption] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -101,7 +104,7 @@ export const ActivityCreationPage = () => {
   const typeOptionLabel =
     selectedType === ActivityType.Eating ? "進食類型" : "心情類型";
 
-  const handleTypeSelect = (type: ActivityType) => {
+  const handleTypeSelect = (type: ActivityTypeValue) => {
     if (!selectedBabyId) {
       notifications.show({
         color: "yellow",

@@ -29,9 +29,9 @@ export const AdminListHeader = ({
       {/* 標題列 */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-babo-text">{title}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
           {subtitle && (
-            <p className="text-babo-text-light text-sm mt-0.5">{subtitle}</p>
+            <p className="text-gray-400 text-sm mt-0.5">{subtitle}</p>
           )}
         </div>
         {addButton}
@@ -42,14 +42,14 @@ export const AdminListHeader = ({
         <div className="flex-1 relative">
           <Search
             size={16}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-babo-text-light pointer-events-none"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
           />
           <input
             type="text"
             value={searchValue}
             onChange={(e) => onSearch(e.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full pl-10 pr-4 py-3 rounded-[32px] bg-white border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-blue-200 focus:border-babo-primary transition-all shadow-sm"
+            className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm outline-none focus:border-blue-400 transition-all"
           />
         </div>
         {filterButton}

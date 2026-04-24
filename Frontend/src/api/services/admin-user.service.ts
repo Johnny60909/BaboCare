@@ -3,7 +3,7 @@
  */
 
 import apiClient from '../../lib/apiClient';
-import type { UserListItem, UserDetailDto, CreateUserRequest, UpdateUserRequest } from '../dtos/user.dto';
+import type { UserListItem, UserDetailDto, CreateUserRequest, UpdateUserRequest } from '../dtos/Users/user.dto';
 
 export const adminUserService = {
   /**

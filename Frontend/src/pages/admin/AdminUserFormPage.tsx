@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
-import { ChevronLeft } from "lucide-react";
+import { X } from "lucide-react";
 import {
   useAdminUserDetail,
   useCreateUserMutation,
   useUpdateUserMutation,
 } from "../../hooks/queries/useAdminUsers";
-import type { CreateUserRequest } from "../../api/dtos/user.dto";
+import type { CreateUserRequest } from "../../api/dtos/Users/user.dto";
 
 interface UserFormState extends CreateUserRequest {
   id?: string;
@@ -34,6 +34,7 @@ export const AdminUserFormPage = () => {
   const { id } = useParams<{ id?: string }>();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const formRef = useRef<HTMLFormElement>(null);
   const { data: existingUser, isLoading: loading } = useAdminUserDetail(id);
   const createMutation = useCreateUserMutation();
   const updateMutation = useUpdateUserMutation();
@@ -107,160 +108,156 @@ export const AdminUserFormPage = () => {
   };
 
   if (loading)
-    return <div className="p-6 text-center text-babo-text-light">載入中…</div>;
+    return <div className="p-6 text-center text-gray-400">載入中…</div>;
+
+  const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="min-h-screen bg-babo-bg pb-24 px-6 pt-6">
-      {/* 返回按鈕 */}
-      <button
-        onClick={() => navigate("/admin/users")}
-        className="flex items-center gap-1 text-babo-primary text-sm font-medium mb-6 active:scale-95 transition-all"
-      >
-        <ChevronLeft size={18} />
-        返回帳號管理
-      </button>
+    <div className="min-h-screen bg-[#F8F9FA] text-left">
+      {/* 置頂導覽列 */}
+      <nav className="sticky top-0 bg-white/80 backdrop-blur-md px-6 py-4 flex items-center justify-between z-10 border-b border-gray-100">
+        <button
+          type="button"
+          onClick={() => navigate("/admin/users")}
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+        >
+          <X size={18} className="text-gray-400" />
+        </button>
+        <h3 className="font-bold">{isEdit ? "編輯資料" : "新增帳號"}</h3>
+        <button
+          type="button"
+          onClick={() => formRef.current?.requestSubmit()}
+          disabled={isPending}
+          className="text-blue-500 font-bold text-sm disabled:opacity-50"
+        >
+          {isPending ? "儲存中…" : "儲存"}
+        </button>
+      </nav>
 
-      <div className="max-w-2xl">
-        <h1 className="text-2xl font-bold text-babo-text mb-1">
-          {isEdit ? "編輯帳號" : "新增帳號"}
-        </h1>
-        <p className="text-babo-text-light text-sm mb-6">
-          填寫用戶基本資訊和權限設定
-        </p>
-
+      <form ref={formRef} onSubmit={submit} className="p-6 space-y-6">
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-[20px] text-sm text-red-600">
+          <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-600">
             {error}
           </div>
         )}
 
-        <form onSubmit={submit} className="flex flex-col gap-6">
-          {/* 帳號密碼 */}
-          <fieldset className="ios-card p-6 flex flex-col gap-4 overflow-hidden">
-            <legend className="px-0 text-lg font-bold text-babo-text">
-              登入資訊
-            </legend>
-            <Field label="帳號 (userName)" required>
-              <input
-                type="text"
-                value={form.userName}
-                onChange={(e) => set("userName", e.target.value)}
-                disabled={isEdit}
-                className="input"
-              />
-            </Field>
-            <Field
-              label={isEdit ? "新密碼（留空不更改）" : "密碼"}
-              required={!isEdit}
+        {/* 登入資訊 */}
+        <section className="space-y-4">
+          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+            登入資訊
+          </h4>
+          <FormField label="帳號" required>
+            <input
+              type="text"
+              value={form.userName}
+              onChange={(e) => set("userName", e.target.value)}
+              disabled={isEdit}
+              className="mantine-form-input"
+              placeholder="請輸入帳號"
+            />
+          </FormField>
+          <FormField
+            label={isEdit ? "新密碼（留空不更改）" : "密碼"}
+            required={!isEdit}
+          >
+            <input
+              type="password"
+              value={form.password}
+              onChange={(e) => set("password", e.target.value)}
+              className="mantine-form-input"
+              placeholder="請輸入密碼"
+            />
+          </FormField>
+        </section>
+
+        {/* 基本資料 */}
+        <section className="space-y-4">
+          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+            基本資料
+          </h4>
+          <FormField label="姓名" required>
+            <input
+              type="text"
+              value={form.displayName}
+              onChange={(e) => set("displayName", e.target.value)}
+              className="mantine-form-input"
+              placeholder="例如：王曉明"
+            />
+          </FormField>
+          <FormField label="性別">
+            <select
+              value={form.gender}
+              onChange={(e) => set("gender", e.target.value)}
+              className="mantine-form-input"
             >
-              <input
-                type="password"
-                value={form.password}
-                onChange={(e) => set("password", e.target.value)}
-                className="input"
-              />
-            </Field>
-          </fieldset>
+              <option value="">請選擇</option>
+              <option value="Male">男</option>
+              <option value="Female">女</option>
+            </select>
+          </FormField>
+          <FormField label="Email">
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => set("email", e.target.value)}
+              className="mantine-form-input"
+              placeholder="user@example.com"
+            />
+          </FormField>
+          <FormField label="手機">
+            <input
+              type="tel"
+              value={form.phoneNumber}
+              onChange={(e) => set("phoneNumber", e.target.value)}
+              className="mantine-form-input"
+              placeholder="09xx-xxx-xxx"
+            />
+          </FormField>
+        </section>
 
-          {/* 基本資料 */}
-          <fieldset className="ios-card p-6 flex flex-col gap-4 overflow-hidden">
-            <legend className="px-0 text-lg font-bold text-babo-text">
-              基本資料
-            </legend>
-            <Field label="姓名" required>
-              <input
-                type="text"
-                value={form.displayName}
-                onChange={(e) => set("displayName", e.target.value)}
-                className="input"
-              />
-            </Field>
-            <Field label="性別">
-              <select
-                value={form.gender}
-                onChange={(e) => set("gender", e.target.value)}
-                className="input"
-              >
-                <option value="">請選擇</option>
-                <option value="Male">男</option>
-                <option value="Female">女</option>
-              </select>
-            </Field>
-            <Field label="Email">
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => set("email", e.target.value)}
-                className="input"
-              />
-            </Field>
-            <Field label="手機">
-              <input
-                type="tel"
-                value={form.phoneNumber}
-                onChange={(e) => set("phoneNumber", e.target.value)}
-                className="input"
-              />
-            </Field>
-          </fieldset>
-
-          {/* 角色 */}
-          <fieldset className="ios-card p-6 flex flex-col gap-3 overflow-hidden">
-            <legend className="px-0 text-lg font-bold text-babo-text">
-              角色
-            </legend>
-            {ALL_ROLES.map(({ value, label }) => (
-              <label
-                key={value}
-                className="flex items-center gap-3 text-sm cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-              >
-                <input
-                  type="checkbox"
-                  checked={form.roles?.includes(value) ?? false}
-                  onChange={() => toggleRole(value)}
-                  className="w-5 h-5 cursor-pointer"
-                />
-                <span className="text-babo-text font-medium">{label}</span>
-              </label>
-            ))}
-          </fieldset>
-
-          {/* 啟用 */}
-          <label className="flex items-center gap-3 text-sm cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors">
+        {/* 帳號權限 */}
+        <section className="space-y-4">
+          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+            帳號權限與屬性
+          </h4>
+          <FormField label="主要身分">
+            <div className="flex flex-wrap gap-2">
+              {ALL_ROLES.map(({ value, label }) => (
+                <label
+                  key={value}
+                  className={`inline-flex items-center px-4 py-2 rounded-full text-xs font-bold cursor-pointer border transition-all ${
+                    form.roles?.includes(value)
+                      ? "bg-blue-50 border-blue-500 text-blue-600"
+                      : "bg-[#F8F9FA] border-gray-200 text-gray-500"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={form.roles?.includes(value) ?? false}
+                    onChange={() => toggleRole(value)}
+                    className="sr-only"
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </FormField>
+          <label className="flex items-center gap-3 text-sm cursor-pointer">
             <input
               type="checkbox"
               checked={form.isActive}
               onChange={(e) => set("isActive", e.target.checked)}
-              className="w-5 h-5 cursor-pointer"
+              className="w-4 h-4 accent-blue-600 cursor-pointer"
             />
-            <span className="text-babo-text font-medium">啟用帳號</span>
+            <span className="text-gray-700 font-medium text-xs">啟用帳號</span>
           </label>
-
-          <div className="flex gap-3 pt-6 border-t border-gray-100">
-            <button
-              type="submit"
-              disabled={createMutation.isPending || updateMutation.isPending}
-              className="flex-1 rounded-[32px] py-3.5 text-base font-bold text-white bg-babo-primary active:scale-95 transition-all shadow-md disabled:opacity-60"
-            >
-              {createMutation.isPending || updateMutation.isPending
-                ? "儲存中…"
-                : "儲存"}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate("/admin/users")}
-              className="flex-1 py-3.5 rounded-[32px] border-2 border-gray-300 text-babo-text text-base font-bold hover:bg-gray-50 transition-colors active:scale-95"
-            >
-              取消
-            </button>
-          </div>
-        </form>
-      </div>
+        </section>
+      </form>
     </div>
   );
 };
 
-const Field = ({
+const FormField = ({
   label,
   required,
   children,
@@ -269,8 +266,8 @@ const Field = ({
   required?: boolean;
   children: React.ReactNode;
 }) => (
-  <div className="flex flex-col gap-1">
-    <label className="text-sm text-gray-700">
+  <div className="space-y-1">
+    <label className="text-xs font-bold text-gray-700 ml-1">
       {label}
       {required && <span className="text-red-500 ml-0.5">*</span>}
     </label>

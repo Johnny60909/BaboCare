@@ -4,7 +4,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminUserService } from "../../api/services/admin-user.service";
-import type { CreateUserRequest, UpdateUserRequest } from '../../api/dtos/user.dto';
+import type { CreateUserRequest, UpdateUserRequest } from '../../api/dtos/Users/user.dto';
 
 const USERS_QUERY_KEY = ['admin-users'];
 const USER_DETAIL_QUERY_KEY = (id: string) => ['admin-user', id];

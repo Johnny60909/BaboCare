@@ -3,7 +3,7 @@
  */
 
 import apiClient from '../../../lib/apiClient';
-import type { TokenResponse, LoginParams } from '../dtos/auth.dto';
+import type { TokenResponse, LoginParams } from '../../dtos/Auth/auth.dto';
 
 export const authService = {
   /**

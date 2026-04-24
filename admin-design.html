@@ -17,22 +17,17 @@
 
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #F8F9FA; /* Mantine 灰 */
+            background-color: #F8F9FA; 
             color: #212529;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Mantine 風格卡片 */
         .mantine-card {
             background: white;
             border-radius: 32px;
             border: 1px solid #E9ECEF;
             box-shadow: var(--mantine-shadow-md);
             transition: transform 0.1s ease;
-        }
-
-        .mantine-card:active {
-            transform: scale(0.99);
         }
 
         .glass-nav {
@@ -62,13 +57,132 @@
             border-radius: 20px;
         }
 
-        /* 隱藏捲軸 */
+        /* 表單元件樣式 */
+        .mantine-input {
+            width: 100%;
+            background: #F8F9FA;
+            border: 1px solid #E9ECEF;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .mantine-input:focus {
+            border-color: #228be6;
+        }
+
+        /* 多選下拉選單樣式 */
+        .multi-select-container {
+            position: relative;
+        }
+        .multi-select-box {
+            min-height: 46px;
+            background: #F8F9FA;
+            border: 1px solid #E9ECEF;
+            border-radius: 12px;
+            padding: 6px 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            cursor: pointer;
+        }
+        .multi-select-box:focus-within {
+            border-color: #228be6;
+        }
+        .select-tag {
+            background: white;
+            border: 1px solid #E9ECEF;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .select-tag i {
+            color: #ADB5BD;
+            cursor: pointer;
+        }
+        .select-tag i:hover {
+            color: #FA5252;
+        }
+        .select-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #E9ECEF;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            z-index: 50;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .select-dropdown.active {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 12px 16px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .dropdown-item:hover {
+            background: #F8F9FA;
+        }
+        .dropdown-item.selected {
+            color: #228be6;
+            background: #e7f5ff;
+        }
+
+        .chip-checkbox {
+            display: none;
+        }
+        .chip-label {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #F8F9FA;
+            border: 1px solid #E9ECEF;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chip-checkbox:checked + .chip-label {
+            background: #e7f5ff;
+            border-color: #228be6;
+            color: #228be6;
+        }
+
+        /* 檔案上傳框 */
+        .upload-zone {
+            border: 2px dashed #E9ECEF;
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            background: #F8F9FA;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .upload-zone:hover {
+            background: #F1F3F5;
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- 1. 管理首頁 (Dashboard) -->
+    <!-- 1. 管理首頁 -->
     <div id="page-admin-main" class="page active bg-[#F8F9FA] px-6 pt-12">
         <header class="mb-8 flex justify-between items-start">
             <div>
@@ -80,7 +194,6 @@
             </div>
         </header>
 
-        <!-- 數據指標 -->
         <div class="grid grid-cols-2 gap-4 mb-8">
             <div class="mantine-card p-5 bg-blue-50 border-none">
                 <div class="flex justify-between items-center mb-2">
@@ -88,7 +201,7 @@
                     <span class="text-[10px] font-bold text-blue-400">+12%</span>
                 </div>
                 <p class="text-2xl font-bold">1,284</p>
-                <p class="text-[10px] text-blue-600/60 font-medium">總註冊用戶</p>
+                <p class="text-[10px] text-blue-600/60 font-medium">總用戶</p>
             </div>
             <div class="mantine-card p-5 bg-green-50 border-none">
                 <div class="flex justify-between items-center mb-2">
@@ -102,7 +215,7 @@
 
         <h3 class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-widest">待處理任務</h3>
         <div class="space-y-3">
-            <div onclick="showPage('page-admin-pending')" class="mantine-card p-5 flex items-center gap-4 bg-white">
+            <div onclick="showPage('page-admin-pending')" class="mantine-card p-5 flex items-center gap-4 bg-white cursor-pointer">
                 <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-500">
                     <i class="fas fa-user-clock text-xl"></i>
                 </div>
@@ -112,195 +225,208 @@
                 </div>
                 <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
             </div>
-            <div class="mantine-card p-5 flex items-center gap-4 bg-white">
-                <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-500">
-                    <i class="fas fa-file-medical text-xl"></i>
-                </div>
-                <div class="flex-1">
-                    <p class="font-bold text-sm">健康日報表</p>
-                    <p class="text-xs text-gray-400">已自動生成 42 份</p>
-                </div>
-                <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-            </div>
         </div>
     </div>
 
-    <!-- 2. 帳號管理 (清單模式) -->
+    <!-- 2. 帳號管理 -->
     <div id="page-admin-users" class="page bg-white px-6 pt-12">
         <header class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold">帳號管理</h2>
-            <button class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+            <button onclick="showPage('page-admin-edit')" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
                 <i class="fas fa-plus"></i> 新增
             </button>
         </header>
 
-        <!-- 搜尋與篩選 -->
         <div class="flex gap-2 mb-6">
             <div class="relative flex-1">
                 <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-sm"></i>
-                <input type="text" placeholder="搜尋姓名..." class="w-full bg-gray-50 p-3 pl-10 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-100 border border-gray-100">
+                <input type="text" placeholder="搜尋姓名..." class="w-full bg-gray-50 p-3 pl-10 rounded-xl text-sm outline-none border border-gray-100">
             </div>
-            <button class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 border border-gray-100">
-                <i class="fas fa-filter text-sm"></i>
-            </button>
         </div>
 
-        <!-- 清單 -->
         <div class="space-y-4">
-            <!-- 用戶項目 -->
             <div class="flex items-center gap-4 p-4 border-b border-gray-50">
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Annie" class="w-10 h-10 rounded-full bg-gray-100">
                 <div class="flex-1">
                     <p class="text-sm font-bold">王曉明</p>
-                    <p class="text-[10px] text-gray-400 font-medium uppercase tracking-tight">Professional Sitter</p>
+                    <p class="text-[10px] text-gray-400 font-medium uppercase">Professional Sitter</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="px-2 py-1 bg-blue-50 text-blue-500 text-[10px] font-bold rounded">保母</span>
-                    <button class="text-gray-300 p-2"><i class="fas fa-edit"></i></button>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 p-4 border-b border-gray-50">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=David" class="w-10 h-10 rounded-full bg-gray-100">
-                <div class="flex-1">
-                    <p class="text-sm font-bold">李大維</p>
-                    <p class="text-[10px] text-gray-400 font-medium">david@example.com</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="px-2 py-1 bg-green-50 text-green-500 text-[10px] font-bold rounded">家長</span>
-                    <button class="text-gray-300 p-2"><i class="fas fa-edit"></i></button>
-                </div>
-            </div>
-            <!-- 重複模擬 -->
-            <div class="flex items-center gap-4 p-4 border-b border-gray-50">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mimi" class="w-10 h-10 rounded-full bg-gray-100">
-                <div class="flex-1">
-                    <p class="text-sm font-bold">張美英</p>
-                    <p class="text-[10px] text-gray-400 font-medium uppercase tracking-tight">Professional Sitter</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="px-2 py-1 bg-blue-50 text-blue-500 text-[10px] font-bold rounded">保母</span>
-                    <button class="text-gray-300 p-2"><i class="fas fa-edit"></i></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 分頁器 -->
-        <div class="mt-10 flex justify-between items-center px-2">
-            <span class="text-xs text-gray-400 font-medium">第 1 頁，共 12 頁</span>
-            <div class="flex gap-2">
-                <button class="w-8 h-8 rounded-lg border border-gray-100 flex items-center justify-center text-gray-300"><i class="fas fa-chevron-left text-[10px]"></i></button>
-                <button class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold">1</button>
-                <button class="w-8 h-8 rounded-lg border border-gray-100 flex items-center justify-center text-gray-400 text-xs font-bold">2</button>
-                <button class="w-8 h-8 rounded-lg border border-gray-100 flex items-center justify-center text-gray-400"><i class="fas fa-chevron-right text-[10px]"></i></button>
+                <button onclick="showPage('page-admin-edit')" class="text-gray-300 p-2"><i class="fas fa-edit"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- 3. 寶寶管理 (清單模式) -->
+    <!-- 3. 寶寶管理 -->
     <div id="page-admin-babies" class="page bg-white px-6 pt-12">
         <header class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold">寶寶管理</h2>
-            <button class="w-10 h-10 bg-green-500 text-white rounded-xl shadow-sm flex items-center justify-center">
+            <button onclick="showPage('page-admin-edit')" class="w-10 h-10 bg-green-500 text-white rounded-xl shadow-sm flex items-center justify-center">
                 <i class="fas fa-plus"></i>
             </button>
         </header>
-
-        <div class="space-y-4">
-            <!-- 寶寶卡片 -->
-            <div class="mantine-card p-6 bg-white border-gray-100 shadow-none">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-2xl">👶</div>
-                    <div class="flex-1">
-                        <h4 class="font-bold">小圓圓 (Felix)</h4>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="text-[10px] text-gray-400 font-medium"><i class="fas fa-calendar-alt mr-1"></i> 8 個月</span>
-                            <span class="text-[10px] text-gray-400 font-medium"><i class="fas fa-mars mr-1"></i> 男孩</span>
-                        </div>
-                    </div>
+        <div class="mantine-card p-6 bg-white border-gray-100 shadow-none mb-4">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-2xl">👶</div>
+                <div class="flex-1">
+                    <h4 class="font-bold">小圓圓 (Felix)</h4>
                 </div>
-                <div class="bg-gray-50 rounded-2xl p-4 flex justify-between items-center mb-4">
-                    <div class="flex items-center gap-2">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Annie" class="w-6 h-6 rounded-full">
-                        <span class="text-xs font-bold">王曉明 (保母)</span>
-                    </div>
-                    <button class="text-[10px] font-bold text-blue-500 bg-white px-3 py-1.5 rounded-lg border border-blue-100">變更</button>
-                </div>
-                <div class="flex gap-2">
-                    <button class="flex-1 py-3 text-xs font-bold border border-gray-100 rounded-2xl text-gray-500">歷史紀錄</button>
-                    <button class="flex-1 py-3 text-xs font-bold bg-gray-800 text-white rounded-2xl">編輯檔案</button>
-                </div>
-            </div>
-
-            <div class="mantine-card p-6 bg-white border-gray-100 shadow-none">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-14 h-14 bg-pink-50 rounded-2xl flex items-center justify-center text-2xl">👧</div>
-                    <div class="flex-1">
-                        <h4 class="font-bold">比比 (Aneka)</h4>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="text-[10px] text-gray-400 font-medium"><i class="fas fa-calendar-alt mr-1"></i> 1 歲 2 個月</span>
-                            <span class="text-[10px] text-gray-400 font-medium"><i class="fas fa-venus mr-1"></i> 女孩</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-orange-50 rounded-2xl p-4 flex justify-between items-center mb-4">
-                    <div class="flex items-center gap-2 text-orange-600">
-                        <i class="fas fa-exclamation-triangle text-xs"></i>
-                        <span class="text-xs font-bold">目前無指定保母</span>
-                    </div>
-                    <button class="text-[10px] font-bold text-white bg-orange-500 px-3 py-1.5 rounded-lg">立即指派</button>
-                </div>
+                <button onclick="showPage('page-admin-edit')" class="text-gray-300 p-2"><i class="fas fa-edit text-sm"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- 4. 待審核帳號 (清單模式) -->
+    <!-- 4. 待審核帳號 -->
     <div id="page-admin-pending" class="page bg-white px-6 pt-12">
         <header class="mb-6">
             <h2 class="text-2xl font-bold">待審核帳號</h2>
-            <p class="text-gray-400 text-sm">共有 3 筆註冊申請待處理</p>
         </header>
-
-        <div class="space-y-4">
-            <div class="mantine-card p-6 bg-white border-gray-100 shadow-none">
-                <div class="flex items-center gap-4 mb-6">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jerry" class="w-12 h-12 rounded-full">
-                    <div class="flex-1">
-                        <p class="font-bold">林大為 (David)</p>
-                        <p class="text-[10px] text-gray-400 font-medium uppercase mt-0.5">申請身分：<span class="text-blue-500 font-bold">保母</span></p>
-                    </div>
-                    <div class="text-right">
-                        <span class="block text-[10px] text-gray-300 font-bold">2024.10.15</span>
-                        <span class="px-2 py-0.5 bg-gray-100 text-gray-400 text-[8px] font-bold rounded">GOOGLE</span>
-                    </div>
-                </div>
-                <div class="flex gap-3">
-                    <button class="flex-1 py-3 text-xs font-bold text-red-500 bg-red-50 rounded-2xl">退回申請</button>
-                    <button class="flex-1 py-3 text-xs font-bold text-white bg-blue-600 rounded-2xl">批准入系統</button>
+        <div class="mantine-card p-6 border-gray-100 shadow-none mb-4">
+            <div class="flex items-center gap-4 mb-6">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jerry" class="w-12 h-12 rounded-full">
+                <div class="flex-1">
+                    <p class="font-bold">林大為 (David)</p>
                 </div>
             </div>
+            <div class="flex gap-3">
+                <button class="flex-1 py-3 text-xs font-bold text-red-500 bg-red-50 rounded-2xl">退回</button>
+                <button class="flex-1 py-3 text-xs font-bold text-white bg-blue-600 rounded-2xl">批准</button>
+            </div>
+        </div>
+    </div>
 
-            <div class="mantine-card p-6 bg-white border-gray-100 shadow-none">
-                <div class="flex items-center gap-4 mb-6">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mimi" class="w-12 h-12 rounded-full">
-                    <div class="flex-1">
-                        <p class="font-bold">陳小美 (Mimi)</p>
-                        <p class="text-[10px] text-gray-400 font-medium uppercase mt-0.5">申請身分：<span class="text-green-500 font-bold">家長</span></p>
-                    </div>
-                    <div class="text-right">
-                        <span class="block text-[10px] text-gray-300 font-bold">2024.10.14</span>
-                        <span class="px-2 py-0.5 bg-green-100 text-green-600 text-[8px] font-bold rounded">LINE</span>
+    <!-- 5. 編輯/新增頁面 -->
+    <div id="page-admin-edit" class="page bg-[#F8F9FA]">
+        <nav class="sticky top-0 bg-white/80 backdrop-blur-md px-6 py-4 flex items-center justify-between z-10 border-b border-gray-100">
+            <button onclick="showPage('page-admin-users')" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100">
+                <i class="fas fa-times text-gray-400"></i>
+            </button>
+            <h3 class="font-bold">編輯資料</h3>
+            <button onclick="showPage('page-admin-main')" class="text-blue-500 font-bold text-sm">儲存</button>
+        </nav>
+
+        <div class="p-6 space-y-6">
+            <!-- 基本資料 Section -->
+            <section class="space-y-4">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">基本資料</h4>
+                
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-700 ml-1">顯示名稱</label>
+                    <input type="text" class="mantine-input" placeholder="例如：王曉明">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-700 ml-1">電子郵件</label>
+                    <input type="email" class="mantine-input" placeholder="user@example.com">
+                </div>
+            </section>
+
+            <!-- 權限設定 Section -->
+            <section class="space-y-4">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">帳號權限與屬性</h4>
+
+                <!-- 單選 (Radio Group 樣式) -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 ml-1">主要身分</label>
+                    <div class="flex bg-gray-100 p-1 rounded-xl border border-gray-200">
+                        <label class="flex-1 text-center py-2 text-xs font-bold cursor-pointer rounded-lg bg-white shadow-sm transition-all">
+                            保母
+                        </label>
+                        <label class="flex-1 text-center py-2 text-xs font-bold text-gray-400 cursor-pointer rounded-lg hover:text-gray-600 transition-all">
+                            家長
+                        </label>
                     </div>
                 </div>
-                <div class="flex gap-3">
-                    <button class="flex-1 py-3 text-xs font-bold text-red-500 bg-red-50 rounded-2xl">退回</button>
-                    <button class="flex-1 py-3 text-xs font-bold text-white bg-green-600 rounded-2xl">產生邀請碼</button>
+
+                <!-- 多選下拉選單 (Multi-select Dropdown) - 新增內容 -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 ml-1">可收托地區 (多選下拉)</label>
+                    <div class="multi-select-container">
+                        <div class="multi-select-box" onclick="toggleDropdown()">
+                            <div class="select-tag">
+                                台北市 <i class="fas fa-times"></i>
+                            </div>
+                            <div class="select-tag">
+                                新北市 <i class="fas fa-times"></i>
+                            </div>
+                            <span class="text-gray-300 text-xs ml-auto"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div id="dropdown-list" class="select-dropdown">
+                            <div class="dropdown-item selected">
+                                台北市 <i class="fas fa-check"></i>
+                            </div>
+                            <div class="dropdown-item selected">
+                                新北市 <i class="fas fa-check"></i>
+                            </div>
+                            <div class="dropdown-item">
+                                桃園市
+                            </div>
+                            <div class="dropdown-item">
+                                台中市
+                            </div>
+                            <div class="dropdown-item">
+                                台南市
+                            </div>
+                            <div class="dropdown-item">
+                                高雄市
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- 多選標籤 (Chip/Tag 樣式) -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 ml-1">專業技能標籤</label>
+                    <div class="flex flex-wrap gap-2">
+                        <input type="checkbox" id="skill1" class="chip-checkbox" checked>
+                        <label for="skill1" class="chip-label">嬰兒急救證照</label>
+
+                        <input type="checkbox" id="skill2" class="chip-checkbox">
+                        <label for="skill2" class="chip-label">幼兒膳食證照</label>
+
+                        <input type="checkbox" id="skill3" class="chip-checkbox">
+                        <label for="skill3" class="chip-label">蒙特梭利教學</label>
+
+                        <input type="checkbox" id="skill4" class="chip-checkbox" checked>
+                        <label for="skill4" class="chip-label">雙語溝通</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 媒體上傳 Section -->
+            <section class="space-y-4">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">相關附件</h4>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-700 ml-1">大頭照或證照影本</label>
+                    <div class="upload-zone">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
+                            <i class="fas fa-cloud-upload-alt text-blue-500"></i>
+                        </div>
+                        <p class="text-xs font-bold">點擊或拖曳檔案至此</p>
+                        <p class="text-[10px] text-gray-400 mt-1">支援 JPG, PNG, PDF (最大 5MB)</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="aspect-square bg-gray-200 rounded-xl relative overflow-hidden">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Annie" class="w-full h-full object-cover">
+                        <button class="absolute top-1 right-1 w-5 h-5 bg-black/50 text-white rounded-full text-[8px] flex items-center justify-center">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 刪除按鈕 -->
+            <div class="pt-4">
+                <button class="w-full py-4 text-xs font-bold text-red-500 bg-red-50 rounded-2xl">
+                    刪除此資料
+                </button>
             </div>
         </div>
     </div>
 
     <!-- 管理底部導覽列 -->
-    <nav id="admin-nav" class="fixed bottom-0 left-0 right-0 h-[100px] glass-nav flex items-center justify-around px-4 pb-4">
+    <nav id="admin-nav" class="fixed bottom-0 left-0 right-0 h-[100px] glass-nav flex items-center justify-around px-4 pb-4 z-20">
         <button onclick="showPage('page-admin-main')" class="flex flex-col items-center gap-1.5 p-2 transition-all" data-id="page-admin-main">
             <i class="fas fa-chart-pie text-lg"></i>
             <span class="text-[9px] font-bold">管理首頁</span>
@@ -327,17 +453,20 @@
 
     <script>
         function showPage(pageId) {
-            // 隱藏所有頁面
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             
-            // 顯示選定頁面
             const target = document.getElementById(pageId);
             if (target) target.classList.add('active');
 
-            // 更新選單樣式
-            updateNavUI(pageId);
+            // 進入編輯頁面時隱藏底部導覽，離開時顯示
+            const nav = document.getElementById('admin-nav');
+            if (pageId === 'page-admin-edit') {
+                nav.style.display = 'none';
+            } else {
+                nav.style.display = 'flex';
+                updateNavUI(pageId);
+            }
             
-            // 滾動置頂
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -355,17 +484,28 @@
             });
         }
 
+        // 多選下拉選單切換
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown-list');
+            dropdown.classList.toggle('active');
+        }
+
+        // 點擊外部關閉下拉選單
+        window.addEventListener('click', function(e) {
+            if (!document.querySelector('.multi-select-container').contains(e.target)) {
+                document.getElementById('dropdown-list').classList.remove('active');
+            }
+        });
+
         function exitAdmin() {
-            // 模擬返回 App 前台
             const body = document.querySelector('body');
             body.style.opacity = '0';
             setTimeout(() => {
-                alert('已登出管理員模式，返回 App 首頁。');
+                alert('已登出管理員模式');
                 location.reload();
             }, 300);
         }
 
-        // 初始狀態
         window.onload = () => {
             updateNavUI('page-admin-main');
         };

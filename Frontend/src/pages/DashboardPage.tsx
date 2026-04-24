@@ -6,11 +6,11 @@ import {
   useBabyActivities,
 } from "../hooks/queries/Activities/useActivities";
 import { useGetBabies } from "../hooks/queries/Babies/useBabies";
-import { ActivityType } from "../api/dtos/Activities/activityDtos";
-import type {
-  IActivity,
-  IBabyActivitySummary,
+import {
+  ActivityType,
+  type ActivityTypeValue,
 } from "../api/dtos/Activities/activityDtos";
+import type { IActivity } from "../api/dtos/Activities/activityDtos";
 import type { IBaby } from "../api/dtos/Babies/babyDtos";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5181";
@@ -20,7 +20,7 @@ const getPhotoUrl = (url: string) =>
 const getAvatarUrl = (url: string | undefined | null, fallback: string) =>
   url ? (url.startsWith("http") ? url : `${API_URL}${url}`) : fallback;
 
-const ACTIVITY_LABELS: Record<ActivityType, string> = {
+const ACTIVITY_LABELS: Record<ActivityTypeValue, string> = {
   [ActivityType.Feeding]: "🍼 喝奶",
   [ActivityType.Eating]: "🥣 副食品",
   [ActivityType.Diaper]: "💩 換尿布",

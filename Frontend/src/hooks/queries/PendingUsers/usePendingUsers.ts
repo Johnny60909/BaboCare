@@ -4,7 +4,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { pendingAccountService } from '../../../api/services/PendingUsers/pending-account.service';
-import type { PendingRegisterRequest, PendingActivateRequest } from '../../api/dtos/pending-user.dto';
+import type { PendingRegisterRequest, PendingActivateRequest } from '../../../api/dtos/PendingUsers/pending-user.dto';
 
 const PENDING_USERS_QUERY_KEY = ['pending-users'];
 

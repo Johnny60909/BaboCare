@@ -5,18 +5,20 @@ import { clearTokens, getRefreshToken, getToken, setRefreshToken, setToken } fro
 /**
  * 統一響應狀態碼
  */
-export enum ResponseStateEnum {
-  Success = 111,
-  NotFound = 493,
-  NoPermission = 495,
-  Error = 999
-}
+export const ResponseStateEnum = {
+  Success: 111,
+  NotFound: 493,
+  NoPermission: 495,
+  Error: 999,
+} as const;
+
+export type ResponseState = typeof ResponseStateEnum[keyof typeof ResponseStateEnum];
 
 /**
  * 統一響應結構
  */
 export interface JsonResponse<T = any> {
-  state: ResponseStateEnum;
+  state: ResponseState;
   message: string | null;
   result: T;
 }

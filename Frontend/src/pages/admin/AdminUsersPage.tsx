@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { Plus, Pencil, Filter } from "lucide-react";
+import { Plus, Pencil, Filter, UserCheck, UserX, Trash2 } from "lucide-react";
 import { modals } from "@mantine/modals";
 import { Text } from "@mantine/core";
 import {
@@ -79,14 +79,14 @@ export const AdminUsersPage = () => {
   };
 
   if (loading)
-    return <div className="p-6 text-center text-babo-text-light">載入中…</div>;
+    return <div className="p-6 text-center text-gray-400">載入中…</div>;
   if (error)
     return (
       <div className="p-6 text-center text-red-500">載入失敗，請稍後再試</div>
     );
 
   return (
-    <div className="min-h-screen bg-babo-bg pb-24 px-6 pt-6">
+    <div className="min-h-screen bg-white px-6 pt-12 pb-28 text-left">
       <AdminListHeader
         title="帳號管理"
         subtitle={`共 ${filtered.length} 筆帳號`}
@@ -98,7 +98,7 @@ export const AdminUsersPage = () => {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="appearance-none pl-9 pr-4 py-3 rounded-[32px] bg-white border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-blue-200 transition-all shadow-sm text-babo-text-light"
+              className="appearance-none pl-9 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm outline-none focus:border-blue-400 transition-all text-gray-500"
             >
               {roleOptions.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -108,40 +108,39 @@ export const AdminUsersPage = () => {
             </select>
             <Filter
               size={14}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-babo-text-light pointer-events-none"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
             />
           </div>
         }
         addButton={
           <button
             onClick={() => navigate("/admin/users/new")}
-            className="flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold text-white bg-babo-primary active:scale-95 transition-all shadow-md"
+            className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center active:scale-95 transition-all"
           >
             <Plus size={18} />
-            新增
           </button>
         }
       />
 
       {paged.length === 0 ? (
         <div className="ios-card p-12 text-center">
-          <p className="text-babo-text-light">尚無符合的帳號資料</p>
+          <p className="text-gray-400">尚無符合的帳號資料</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div>
           {paged.map((u) => (
             <div
               key={u.id}
-              className={`ios-card p-5 flex items-start justify-between gap-4 ${u.isDeleted ? "opacity-50" : ""}`}
+              className={`flex items-center gap-4 p-4 border-b border-gray-50 ${u.isDeleted ? "opacity-50" : ""}`}
             >
               {/* 頭像 */}
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-base flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {(u.displayName || "?").charAt(0).toUpperCase()}
               </div>
 
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                  <h3 className="text-base font-bold text-babo-text">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <h3 className="text-sm font-bold text-gray-800">
                     {u.displayName}
                   </h3>
                   <span
@@ -154,11 +153,11 @@ export const AdminUsersPage = () => {
                     {u.isActive ? "啟用" : "停用"}
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-1.5 mb-1.5">
+                <div className="flex flex-wrap gap-1 mb-1">
                   {u.roles.map((r) => (
                     <span
                       key={r}
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-babo-primary/10 text-babo-primary"
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600"
                     >
                       {roleLabel[r] ?? r}
                     </span>
@@ -168,7 +167,7 @@ export const AdminUsersPage = () => {
                   {u.loginMethods.map((m) => (
                     <span
                       key={m}
-                      className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-babo-text-light"
+                      className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-400"
                     >
                       {methodLabel[m] ?? m}
                     </span>
@@ -176,26 +175,28 @@ export const AdminUsersPage = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col items-end gap-2 flex-shrink-0">
+              <div className="flex items-center gap-1 flex-shrink-0">
                 <button
                   onClick={() => navigate(`/admin/users/${u.id}/edit`)}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors text-babo-primary"
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-300"
                   title="編輯"
                 >
                   <Pencil size={16} />
                 </button>
                 <button
                   onClick={() => toggleActive(u.id, u.isActive)}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-300 text-babo-text-light hover:bg-gray-100 transition-colors whitespace-nowrap"
+                  className={`p-2 rounded-full hover:bg-gray-100 transition-colors ${u.isActive ? "text-green-300" : "text-gray-300"}`}
+                  title={u.isActive ? "停用" : "啟用"}
                 >
-                  {u.isActive ? "停用" : "啟用"}
+                  {u.isActive ? <UserCheck size={16} /> : <UserX size={16} />}
                 </button>
                 {!u.isDeleted && (
                   <button
                     onClick={() => deleteUser(u.id)}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-full border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+                    className="p-2 rounded-full hover:bg-red-50 transition-colors text-red-300"
+                    title="刪除"
                   >
-                    刪除
+                    <Trash2 size={16} />
                   </button>
                 )}
               </div>

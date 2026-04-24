@@ -9,7 +9,7 @@ import type {
   PendingRegisterResponse,
   PendingActivateRequest,
   PendingActivateResponse,
-} from '../dtos/pending-user.dto';
+} from '../../dtos/PendingUsers/pending-user.dto';
 
 export const pendingAccountService = {
   /**

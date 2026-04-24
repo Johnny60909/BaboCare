@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { babyService, userService } from '../../../api/services/Babies/babyService';
-import type { ICreateBabyRequest, IUpdateBabyRequest } from '../../../api/dtos/babyDtos';
+import type { ICreateBabyRequest, IUpdateBabyRequest } from '../../../api/dtos/Babies/babyDtos';
 
 const BABIES_QUERY_KEY = ['babies'];
 const NANNIES_QUERY_KEY = ['nannies'];
@@ -76,7 +76,7 @@ export function useUploadBabyAvatar() {
       babyId: string;
       file: File;
       onProgress?: (percent: number) => void;
-    }) => babyService.uploadAvatar(babyId, file, onProgress),
+    }) => babyService.uploadAvatar(babyId, file, undefined, onProgress),
     onSuccess: async (_data, variables) => {
       // 使用 refetchQueries 強制立即重新取得最新數據
       await queryClient.refetchQueries({ 
