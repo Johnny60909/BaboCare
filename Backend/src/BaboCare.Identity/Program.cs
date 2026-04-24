@@ -71,12 +71,13 @@ builder.Services.AddOpenIddict()
                .DisableTransportSecurityRequirement();
     });
 
-// CORS
+// CORS - 從 appsettings 讀取允許的來源
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
