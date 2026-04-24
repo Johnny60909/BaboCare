@@ -127,7 +127,7 @@ builder.Services.AddCors(options =>
 
 #### Scenario: 開發環境前端跨域請求成功
 
-- **GIVEN** 前端應用執行在 `http://localhost:5174`
+- **GIVEN** 前端應用執行在 `http://localhost:5173`
 - **WHEN** 發起 POST 請求到 `http://localhost:5181/api/account/pending/register`
 - **THEN** 伺服器返回 CORS 預檢回應 (HTTP 204)，包含 `Access-Control-Allow-Origin` 標頭，允許跨域請求
 

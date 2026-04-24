@@ -12,8 +12,7 @@
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  <PrivateAssets>all</PrivateAssets>
 	</PackageReference>
-    <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="7.4.0" />
-    <PackageReference Include="OpenIddict.Validation.SystemNetHttp" Version="7.4.0" />
+    <PackageReference Include="OpenIddict.AspNetCore" Version="7.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 
@@ -21,6 +20,7 @@
     <ProjectReference Include="..\BaboCare.Application\BaboCare.Application.csproj" />
     <ProjectReference Include="..\BaboCare.Domain\BaboCare.Domain.csproj" />
     <ProjectReference Include="..\BaboCare.Infrastructure\BaboCare.Infrastructure.csproj" />
+    <ProjectReference Include="..\BaboCare.Identity\BaboCare.Identity.csproj" />
   </ItemGroup>
 
 </Project>

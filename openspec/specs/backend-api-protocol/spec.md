@@ -149,7 +149,7 @@ HTTP 狀態碼為 200
 
 #### Development Environment CORS Rules
 
-- **允許來源**: `http://localhost:5173`、`http://localhost:5174` 及其他開發端口
+- **允許來源**: `http://localhost:5173` 及其他開發端口
 - **允許方法**: GET、POST、PUT、DELETE、OPTIONS、PATCH
 - **允許標頭**: Content-Type、Authorization 及其他必需標頭
 - **允許認證**: 支持 Cookie 和 Bearer Token
@@ -172,9 +172,9 @@ builder.Services.AddCors(options =>
 
 #### Scenario: 開發環境跨域請求
 
-- **GIVEN** 前端應用在 `http://localhost:5174` 執行
+- **GIVEN** 前端應用在 `http://localhost:5173` 執行
 - **WHEN** 發起 POST 請求到 `http://localhost:5181/api/account/pending/register`
-- **THEN** 伺服器返回 CORS 預檢 OPTIONS 響應 (204)，包含 `Access-Control-Allow-Origin: http://localhost:5174`，隨後允許 POST 請求
+- **THEN** 伺服器返回 CORS 預檢 OPTIONS 響應 (204)，包含 `Access-Control-Allow-Origin: http://localhost:5173`，隨後允許 POST 請求
 
 #### Scenario: 非允許來源跨域請求
 

@@ -1,11 +1,10 @@
 using BaboCare.Application.Persistence;
 using BaboCare.Application.Services;
 using BaboCare.Api.Filters;
-using BaboCare.Domain.Entities.Users;
+using BaboCare.Identity;
 using BaboCare.Infrastructure.Persistence;
 using BaboCare.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
-using OpenIddict.Validation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +12,9 @@ builder.Services.AddControllers(options =>
 {
     // 註冊全域異常過濾器
     options.Filters.Add<ApiExceptionFilter>();
-});
+})
+// 讓 Api 自動採用 BaboCare.Identity assembly 裡的 Controller
+.AddApplicationPart(typeof(BaboCare.Identity.IdentityServiceExtensions).Assembly);
 
 // Add HttpContext accessor for services that need current user context
 builder.Services.AddHttpContextAccessor();
@@ -64,32 +65,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register IAppDbContext interface for Application layer
 builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
-// Identity Core (UserManager/RoleManager only, no cookie auth)
-builder.Services.AddIdentityCore<ApplicationUser>(options =>
-    {
-        options.Password.RequireDigit = false;
-        options.Password.RequireLowercase = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequiredLength = 6;
-    })
-    .AddRoles<ApplicationRole>()
-    .AddEntityFrameworkStores<AppDbContext>();
-
-// OpenIddict validation - validates tokens issued by BaboCare.Identity
-var identityUrl = builder.Configuration["Identity:Url"] ?? "http://localhost:5080/";
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
-});
-builder.Services.AddOpenIddict()
-    .AddValidation(options =>
-    {
-        options.SetIssuer(identityUrl);
-        options.UseSystemNetHttp();
-        options.UseAspNetCore();
-    });
+// Identity Module - OpenIddict Server + Seeder
+builder.Services.AddIdentityModule(builder.Configuration);
 
 // CORS - 從 appsettings 讀取允許的來源
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];

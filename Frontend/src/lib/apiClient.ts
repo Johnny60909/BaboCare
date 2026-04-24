@@ -122,7 +122,7 @@ apiClient.interceptors.response.use(
       params.append('refresh_token', refreshToken);
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_IDENTITY_URL ?? 'http://localhost:5080'}/connect/token`,
+        `${import.meta.env.VITE_API_URL ?? 'http://localhost:5181'}/connect/token`,
         params,
         { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
       );

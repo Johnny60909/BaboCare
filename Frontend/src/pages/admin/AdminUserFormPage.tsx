@@ -49,6 +49,9 @@ export const AdminUserFormPage = () => {
         password: "",
         confirmPassword: "",
         email: existingUser.email ?? "",
+        phoneNumber: existingUser.phoneNumber ?? "",
+        displayName: existingUser.displayName ?? "",
+        gender: existingUser.gender ?? "",
       });
     }
   }, [existingUser]);

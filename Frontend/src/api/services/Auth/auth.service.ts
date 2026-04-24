@@ -17,7 +17,7 @@ export const authService = {
     formData.append('scope', 'openid offline_access');
 
     const response = await apiClient.post<TokenResponse>(
-      `${import.meta.env.VITE_IDENTITY_URL ?? 'http://localhost:5080'}/connect/token`,
+      `${import.meta.env.VITE_API_URL ?? 'http://localhost:5181'}/connect/token`,
       formData,
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     );
@@ -34,7 +34,7 @@ export const authService = {
     formData.append('refresh_token', refreshToken);
 
     const response = await apiClient.post<TokenResponse>(
-      `${import.meta.env.VITE_IDENTITY_URL ?? 'http://localhost:5080'}/connect/token`,
+      `${import.meta.env.VITE_API_URL ?? 'http://localhost:5181'}/connect/token`,
       formData,
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     );
