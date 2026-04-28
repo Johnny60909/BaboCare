@@ -21,6 +21,7 @@ builder.Services.AddHttpContextAccessor();
 
 // Application Services
 builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPendingAccountService, PendingAccountService>();
 builder.Services.AddScoped<IBabyService, BabyService>();
 builder.Services.AddScoped<BabyAuthorizationService>();

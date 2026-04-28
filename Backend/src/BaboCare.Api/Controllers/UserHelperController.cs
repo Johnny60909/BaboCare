@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using BaboCare.Application.Dtos.Users;
 using BaboCare.Application.Dtos.PendingUsers;
 using BaboCare.Application.Persistence;
+using BaboCare.Application.Services;
 using BaboCare.Domain.Entities.Users;
 using BaboCare.Api.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -20,15 +22,18 @@ public class UserHelperController : ControllerBase
 {
     private readonly IAppDbContext _dbContext;
     private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly ICurrentUserService _currentUserService;
     private readonly ILogger<UserHelperController> _logger;
 
     public UserHelperController(
         IAppDbContext dbContext,
         RoleManager<ApplicationRole> roleManager,
+        ICurrentUserService currentUserService,
         ILogger<UserHelperController> logger)
     {
         _dbContext = dbContext;
         _roleManager = roleManager;
+        _currentUserService = currentUserService;
         _logger = logger;
     }
 
@@ -106,5 +111,35 @@ public class UserHelperController : ControllerBase
             _logger.LogError(ex, "Error retrieving parents");
             return JsonResponse<List<ParentDto>>.Fail("取得家長列表時出錯", ResponseStateEnum.Error);
         }
+    }
+
+    /// <summary>
+    /// 取得當前用戶的個人資料
+    /// GET /api/users/me
+    /// </summary>
+    [HttpGet("me")]
+    public async Task<JsonResponse<CurrentUserDto>> GetCurrentUser()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return JsonResponse<CurrentUserDto>.Fail("無法識別用戶", ResponseStateEnum.NoPermission);
+
+        var user = await _currentUserService.GetCurrentUserAsync(userId);
+        return JsonResponse<CurrentUserDto>.Success(user);
+    }
+
+    /// <summary>
+    /// 更新當前用戶的個人資料
+    /// PUT /api/users/me
+    /// </summary>
+    [HttpPut("me")]
+    public async Task<JsonResponse<CurrentUserDto>> UpdateMyProfile([FromBody] UpdateMyProfileRequest request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return JsonResponse<CurrentUserDto>.Fail("無法識別用戶", ResponseStateEnum.NoPermission);
+
+        var user = await _currentUserService.UpdateMyProfileAsync(userId, request);
+        return JsonResponse<CurrentUserDto>.Success(user);
     }
 }
