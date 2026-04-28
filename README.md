@@ -35,23 +35,14 @@ _本專案為個人開發作品，採用SDD openspec AI開發方式，全程以A
 
 本專案採用前後端分離架構，並透過 Docker 容器化技術整合後端服務，實現自動化部署。
 
+[BaboCare網站](https://babocaredemo.vercel.app "BaboCare線上Demo")
+
 ### 🏗 系統架構
 
-| 組件 | 平台 | 技術棧 | 說明 |
-| :--- | :--- | :--- | :--- |
-| **Frontend** | **Vercel** | React | 前端網站 |
-| **Backend** | **Render** | .NET 10 (Docker) | 包含 Identity 與 API 的整合容器 |
-| **Database** | **Neon.tech** | PostgreSQL | 雲端資料庫 |
-
----
-
-### 📦 後端容器化配置 (Docker Multi-stage)
-
-為了優化資源使用，我們將 **Identity** 與 **API** 封裝於同一個 Docker 鏡像中。
-
-#### 🔌 埠號配置 (Port Mapping)
-在容器內部，兩個服務分別執行於：
-* **API**: `Port 80` (Render 對外預設窗口)
-* **Identity**: `Port 81`
+| 組件         | 平台          | 技術棧           | 說明                              |
+| :----------- | :------------ | :--------------- | :-------------------------------- |
+| **Frontend** | **Vercel**    | React            | 前端網站                          |
+| **Backend**  | **Render**    | .NET 10 (Docker) | 包含 Identity 與 API 的服務的容器 |
+| **Database** | **Neon.tech** | PostgreSQL       | 雲端資料庫                        |
 
 ---
