@@ -6,6 +6,7 @@ import {
   useGenerateInviteCodeMutation,
   useRemovePendingUserMutation,
 } from "../../hooks/queries/PendingUsers/usePendingUsers";
+import { getImageUrl } from "../../lib/urlUtils";
 
 const sourceLabel: Record<string, string> = {
   Google: "Google",
@@ -70,7 +71,7 @@ export const AdminPendingPage = () => {
                 <div className="shrink-0">
                   {p.avatarUrl ? (
                     <img
-                      src={p.avatarUrl}
+                      src={getImageUrl(p.avatarUrl)!}
                       alt={p.displayName}
                       className="h-12 w-12 rounded-full object-cover"
                     />

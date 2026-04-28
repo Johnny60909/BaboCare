@@ -10,6 +10,7 @@ import {
 import { AdminListHeader } from "../../components/admin/AdminListHeader";
 import { AdminPagination } from "../../components/admin/AdminPagination";
 import { useDebounce } from "../../hooks/useDebounce";
+import { getImageUrl } from "../../lib/urlUtils";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -102,7 +103,7 @@ export default function AdminBabiesPage() {
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0 overflow-hidden">
                   {baby.avatarUrl ? (
                     <img
-                      src={baby.avatarUrl}
+                      src={getImageUrl(baby.avatarUrl)!}
                       alt={baby.name}
                       className="w-full h-full object-cover"
                     />

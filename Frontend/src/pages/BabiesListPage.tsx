@@ -14,6 +14,7 @@ import {
   useGetBabyCountByRole,
 } from "../hooks/queries/Babies/useBabies";
 import { useNavigate } from "react-router";
+import { getImageUrl } from "../lib/urlUtils";
 
 export default function BabiesListPage() {
   const { data: babies = [] } = useGetBabies();
@@ -43,7 +44,11 @@ export default function BabiesListPage() {
             <Card key={baby.id} shadow="sm" padding="lg" radius="md" withBorder>
               {baby.avatarUrl && (
                 <Card.Section mb="sm">
-                  <Image src={baby.avatarUrl} height={200} alt={baby.name} />
+                  <Image
+                    src={getImageUrl(baby.avatarUrl)!}
+                    height={200}
+                    alt={baby.name}
+                  />
                 </Card.Section>
               )}
 
